@@ -27,7 +27,7 @@ namespace Bai1
 
         public void AddText(string s)
         {
-            textBox.AppendText(line + "\t" + s + Environment.NewLine);
+            textBox.AppendText(line + ": " + s + Environment.NewLine);
             line++;
 
         }
