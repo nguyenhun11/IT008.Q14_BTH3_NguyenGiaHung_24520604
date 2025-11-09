@@ -36,6 +36,7 @@
             this.buttonChange.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.buttonChange.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.buttonChange.BackColor = System.Drawing.Color.LightCoral;
+            this.buttonChange.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.buttonChange.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.buttonChange.Location = new System.Drawing.Point(350, 250);
             this.buttonChange.Name = "buttonChange";
