@@ -318,7 +318,7 @@
             this.buttonPercent.TabIndex = 4;
             this.buttonPercent.Text = "%";
             this.buttonPercent.UseVisualStyleBackColor = false;
-            this.buttonPercent.Click += new System.EventHandler(this.buttonFraction_Click);
+            this.buttonPercent.Click += new System.EventHandler(this.buttonPercent_Click);
             // 
             // buttonCE
             // 
@@ -366,7 +366,7 @@
             this.buttonMC.TabIndex = 4;
             this.buttonMC.Text = "MC";
             this.buttonMC.UseVisualStyleBackColor = false;
-            this.buttonMC.Click += new System.EventHandler(this.buttonFraction_Click);
+            this.buttonMC.Click += new System.EventHandler(this.buttonMC_Click);
             // 
             // buttonMR
             // 
@@ -378,7 +378,7 @@
             this.buttonMR.TabIndex = 4;
             this.buttonMR.Text = "MR";
             this.buttonMR.UseVisualStyleBackColor = false;
-            this.buttonMR.Click += new System.EventHandler(this.buttonFraction_Click);
+            this.buttonMR.Click += new System.EventHandler(this.buttonMR_Click);
             // 
             // buttonMplus
             // 
@@ -390,7 +390,7 @@
             this.buttonMplus.TabIndex = 4;
             this.buttonMplus.Text = "M+";
             this.buttonMplus.UseVisualStyleBackColor = false;
-            this.buttonMplus.Click += new System.EventHandler(this.buttonFraction_Click);
+            this.buttonMplus.Click += new System.EventHandler(this.buttonMplus_Click);
             // 
             // buttonMminus
             // 

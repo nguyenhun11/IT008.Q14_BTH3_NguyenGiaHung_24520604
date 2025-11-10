@@ -625,5 +625,84 @@ namespace Bai6
                 firstValue = result;
             }
         }
+
+        // --- THÊM LOGIC MỚI: NÚT PHẦN TRĂM (%) ---
+        private void buttonPercent_Click(object sender, EventArgs e)
+        {
+            double currentValue = GetValue();
+            double result = 0;
+            string mathExpression = "";
+
+            if (isTypingFirstValue)
+            {
+                // TH 1: Bấm "500 %" -> Kết quả là 0 (theo máy tính Windows)
+                result = 0;
+                mathExpression = "0";
+                firstValue = result;
+                // isTypingFirstValue vẫn là true (hoặc reset)
+                isTypingFirstValue = true;
+                isTypingSecondValue = false;
+            }
+            else if (isTypingSecondValue)
+            {
+                // TH 2: Bấm "100 + 50 %"
+                // Giá trị % được tính toán và lưu vào secondValue
+                if (mathType == MathType.Add || mathType == MathType.Minus)
+                {
+                    // 100 + (50% của 100) = 100 + 50
+                    result = firstValue * (currentValue / 100);
+                }
+                else if (mathType == MathType.Times || mathType == MathType.Divide)
+                {
+                    // 100 * (50%) = 100 * 0.5
+                    result = currentValue / 100;
+                }
+
+                secondValue = result; // Cập nhật secondValue để dùng khi nhấn "="
+
+                // Lấy toán tử để hiển thị
+                char opChar = ' ';
+                switch (mathType)
+                {
+                    case MathType.Add: opChar = '+'; break;
+                    case MathType.Minus: opChar = '-'; break;
+                    case MathType.Times: opChar = '×'; break;
+                    case MathType.Divide: opChar = '÷'; break;
+                }
+                mathExpression = $"{FormatResult(firstValue)} {opChar} {FormatResult(result)}";
+
+                // Sau khi nhấn %, secondValue đã được chốt.
+                // Trạng thái chuyển về "chờ" (giống như vừa nhấn "=")
+                isTypingSecondValue = false;
+            }
+            else
+            {
+                // TH 3: Bấm sau dấu = (ví dụ: "100 + 10 = (110) %")
+                // Kết quả là 0 (theo máy tính Windows)
+                result = 0;
+                mathExpression = "0";
+                firstValue = result;
+                isTypingFirstValue = true; // Sẵn sàng cho phép tính mới
+            }
+
+            MathWrite(mathExpression);
+            textBoxResult.Text = FormatResult(result);
+            isDefaultInput = true;
+        }
+
+        private void buttonMC_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void buttonMR_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void buttonMplus_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
