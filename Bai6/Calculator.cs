@@ -27,10 +27,16 @@ namespace Bai6
         private bool isTypingSecondValue = false;
         private bool isDefaultInput = true;
 
+        // --- THÊM BIẾN BỘ NHỚ ---
+        private double memoryValue = 0;
+
         public Calculator()
         {
             InitializeComponent();
             Reset();
+            // Bạn có thể thêm một Label (ví dụ: labelMemory)
+            // và gọi UpdateMemoryLabel() ở đây và trong các hàm M_
+            UpdateMemoryLabel();
         }
 
         // --- SỬA LỖI 1: Trả về bool để báo hiệu thành công/thất bại ---
@@ -159,6 +165,12 @@ namespace Bai6
         // Hàm này nhận 1 số double và định dạng nó đúng chuẩn (,.): 1.234,56
         private string FormatResult(double value)
         {
+            // Xử lý trường hợp vô cực hoặc NaN (Not-a-Number)
+            if (double.IsNaN(value) || double.IsInfinity(value))
+            {
+                return "Error";
+            }
+
             // Chuyển double sang string dùng InvariantCulture (luôn dùng '.')
             // "G" để loại bỏ số 0 không cần thiết ở phần thập phân
             string s = value.ToString("G", CultureInfo.InvariantCulture);
@@ -182,12 +194,30 @@ namespace Bai6
                 int maxDecimalLength = maxNumOfChar - integerPart.Length;
                 if (maxDecimalLength < 0) maxDecimalLength = 0;
 
-                if (decimalPart.Length > maxDecimalLength && maxDecimalLength > 0)
-                    decimalPart = decimalPart.Substring(0, maxDecimalLength);
+                if (decimalPart.Length > maxDecimalLength)
+                {
+                    // Thử làm tròn thay vì cắt bỏ
+                    try
+                    {
+                        double roundedValue = Math.Round(value, maxDecimalLength);
+                        s = roundedValue.ToString("G", CultureInfo.InvariantCulture);
+                        if (s.StartsWith("-")) s = s.Substring(1);
+                        parts = s.Split('.');
+                        integerPart = parts[0];
+                        decimalPart = (parts.Length > 1) ? parts[1] : null;
+                        formattedInteger = FormatWithDots(integerPart);
+                    }
+                    catch
+                    {
+                        // Nếu làm tròn lỗi, quay lại cắt bỏ
+                        if (maxDecimalLength > 0)
+                            decimalPart = decimalPart.Substring(0, maxDecimalLength);
+                        else
+                            decimalPart = null; // Không có phần thập phân
+                    }
+                }
 
-                // decimalPart = decimalPart.TrimEnd('0'); // "G" đã làm việc này
-
-                if (decimalPart.Length > 0)
+                if (decimalPart != null && decimalPart.Length > 0)
                     return sign + formattedInteger + "," + decimalPart;
             }
 
@@ -312,6 +342,7 @@ namespace Bai6
             mathType = MathType.None;
             InputDelete(); // Đã sửa: set "0" và isDefaultInput = true
             MathDelete();
+            // Lưu ý: Reset (nút C) không xóa bộ nhớ (memoryValue)
         }
 
         // --- SỬA LỖI 4: Implement 1/x (CẬP NHẬT LOGIC) ---
@@ -400,28 +431,45 @@ namespace Bai6
             if (current.EndsWith("."))
                 current = current.Substring(0, current.Length - 1);
 
+            // Kiểm tra lại nếu xóa hết (ví dụ: "-." -> "-")
+            if (string.IsNullOrEmpty(current) || current == "-")
+            {
+                InputDelete(); // Đặt lại là "0"
+                return;
+            }
+
             // Nếu xóa dấu ","
             if (current.EndsWith(","))
-                current = current.Substring(0, current.Length - 1);
+            {
+                textBoxResult.Text = current; // Tạm thời cho phép "123,"
+                return;
+            }
 
-            // Xử lý lại định dạng (khá phức tạp, đơn giản nhất là)
-            // Tạm thời chỉ gán lại
-            textBoxResult.Text = current;
 
-            // Tốt hơn: Parse và format lại
-            // double tempValue = GetValue(); // (lấy từ current)
-            // ... (Phần này cần viết lại cẩn thận hơn)
-            // Tạm thời chấp nhận việc xóa thô
-            textBoxResult.Text = current;
-            if (string.IsNullOrEmpty(current) || current == "-") InputDelete();
+            // Xử lý lại định dạng
+            string sign = current.StartsWith("-") ? "-" : "";
+            string currentNoSign = current.StartsWith("-") ? current.Substring(1) : current;
+
+            if (current.Contains(","))
+            {
+                // Nếu đang có phần thập phân, không format lại
+                textBoxResult.Text = current;
+            }
+            else
+            {
+                // Nếu chỉ còn phần nguyên, format lại
+                string integerPart = currentNoSign.Replace(".", "");
+                textBoxResult.Text = sign + FormatWithDots(integerPart);
+            }
+
         }
 
         private void buttonPm_Click(object sender, EventArgs e)
         {
             if (isTypingFirstValue || isTypingSecondValue)
             {
-                // Case 1: Đang gõ số (hoặc ngay sau khi nhấn +, -, *, /)
-                if (isDefaultInput && textBoxResult.Text == "0") return; // Không đổi dấu số 0
+                // Case 1: Đang gõ số
+                // if (isDefaultInput && textBoxResult.Text == "0") return; // Không đổi dấu số 0 (đã xử lý trong ToggleSign)
                 ToggleSign(); // Chỉ đổi dấu số trên màn hình
             }
             else
@@ -450,7 +498,9 @@ namespace Bai6
             {
                 // TH: Bấm "5 + 3 ="
                 secondValue = GetValue();
-                MathWrite(textBoxPre.Text + " " + FormatResult(secondValue) + " =");
+                // Lấy biểu thức trước đó (ví dụ: "5 +")
+                string mathPrefix = textBoxPre.Text.TrimEnd(' ');
+                MathWrite(mathPrefix + " " + FormatResult(secondValue) + " =");
 
                 if (!CalculateBinaryToFirstValue())
                 {
@@ -483,11 +533,6 @@ namespace Bai6
                 }
                 // --- KẾT THÚC SỬA LỖI ---
 
-                // (Code cũ bị thay thế)
-                // string op = "";
-                // if (mathType != MathType.None) ... (parsing logic) ...
-                // if (op == "" || mathType == MathType.None) ... (return logic) ...
-
                 // Hàm này sẽ dùng (firstValue = 8) và (secondValue = 3) để tính toán
                 if (!CalculateBinaryToFirstValue())
                 {
@@ -507,6 +552,13 @@ namespace Bai6
         // --- SỬA LỖI 2, 3: Dùng FormatResult, cập nhật textBoxResult, kiểm tra lỗi ---
         private void SetUpForBinaryOperator(MathType type)
         {
+            // Xử lý lỗi nếu người dùng bấm 5 + Error
+            if (textBoxResult.Text.Contains("Error"))
+            {
+                Reset(); // Hoặc chỉ HandleCalculationError
+                return;
+            }
+
             if (isTypingSecondValue)
             {
                 // TH: Phép toán chuỗi "5 + 3 -"
@@ -629,6 +681,8 @@ namespace Bai6
         // --- THÊM LOGIC MỚI: NÚT PHẦN TRĂM (%) ---
         private void buttonPercent_Click(object sender, EventArgs e)
         {
+            if (textBoxResult.Text.Contains("Error")) return;
+
             double currentValue = GetValue();
             double result = 0;
             string mathExpression = "";
@@ -690,19 +744,70 @@ namespace Bai6
             isDefaultInput = true;
         }
 
+
+        // --- THÊM CÁC HÀM BỘ NHỚ ---
+
+        // (Bạn có thể thêm 1 Label tên 'labelMemory' vào Form
+        // và gọi UpdateMemoryLabel() trong các hàm này để thấy chữ M)
+        private void UpdateMemoryLabel()
+        {
+            if (labelMemory != null) // Giả định labelMemory tồn tại trong Designer
+            {
+                // Thay đổi logic từ Visible sang Text
+                labelMemory.Text = memoryValue.ToString();
+            }
+        }
+
         private void buttonMC_Click(object sender, EventArgs e)
         {
-
+            memoryValue = 0;
+            UpdateMemoryLabel();
         }
 
         private void buttonMR_Click(object sender, EventArgs e)
         {
-
+            textBoxResult.Text = FormatResult(memoryValue);
+            isDefaultInput = true;
+            // Giá trị này sẽ được GetValue() lấy khi bấm phép toán tiếp theo
         }
 
         private void buttonMplus_Click(object sender, EventArgs e)
         {
+            if (textBoxResult.Text.Contains("Error")) return;
+            memoryValue += GetValue();
+            isDefaultInput = true; // Kết thúc thao tác nhập
+            UpdateMemoryLabel();
+        }
 
+        private void buttonMminus_Click(object sender, EventArgs e)
+        {
+            if (textBoxResult.Text.Contains("Error")) return;
+            memoryValue -= GetValue();
+            isDefaultInput = true; // Kết thúc thao tác nhập
+            UpdateMemoryLabel();
+        }
+
+        private void buttonMS_Click(object sender, EventArgs e)
+        {
+            if (textBoxResult.Text.Contains("Error")) return;
+            memoryValue = GetValue();
+            isDefaultInput = true; // Kết thúc thao tác nhập
+            UpdateMemoryLabel();
+        }
+
+        private void eToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Edit đi");
+        }
+
+        private void viewToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Viuuu");
+        }
+
+        private void helpToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Bạn cần giúp đỡ, OK");
         }
     }
 }
