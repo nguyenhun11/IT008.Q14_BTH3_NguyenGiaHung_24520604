@@ -268,6 +268,36 @@ namespace Bai6
             return 0;
         }
 
+        // --- HÀM TRỢ GIÚP MỚI ---
+        // Lấy biểu thức toán học cho các phép toán 1 ngôi (sqrt, sqr, 1/x)
+        private string GetMathExpressionForSingleOp()
+        {
+            double currentValue = GetValue();
+            string mathExpression;
+
+            // Kiểm tra xem có phải trạng thái "sau khi nhấn =" không
+            // (Không phải đang gõ số 1 VÀ không phải đang gõ số 2)
+            if (!isTypingFirstValue && !isTypingSecondValue)
+            {
+                mathExpression = textBoxPre.Text;
+                // Lọc bỏ dấu " =" ở cuối nếu có
+                if (mathExpression.EndsWith(" ="))
+                {
+                    mathExpression = mathExpression.Substring(0, mathExpression.Length - 2);
+                }
+                // Nếu không có " =", nó có thể là một biểu thức (vd: "sqrt(9)")
+                // chúng ta sẽ dùng nó
+            }
+            else
+            {
+                // Nếu đang gõ (hoặc gõ số đầu tiên, hoặc gõ số thứ 2)
+                // thì chỉ dùng giá trị hiện tại trên màn hình
+                mathExpression = FormatResult(currentValue);
+            }
+            return mathExpression;
+        }
+
+
         private void MathWrite(string s)
         {
             textBoxPre.Text = s;
@@ -284,7 +314,7 @@ namespace Bai6
             MathDelete();
         }
 
-        // --- SỬA LỖI 4: Implement 1/x ---
+        // --- SỬA LỖI 4: Implement 1/x (CẬP NHẬT LOGIC) ---
         private void buttonFraction_Click(object sender, EventArgs e)
         {
             double currentValue = GetValue();
@@ -294,8 +324,9 @@ namespace Bai6
                 return;
             }
 
+            string mathExpression = GetMathExpressionForSingleOp(); // Lấy biểu thức
             double result = 1 / currentValue;
-            MathWrite($"1/({currentValue})");
+            MathWrite($"1/({mathExpression})"); // Sử dụng biểu thức
             textBoxResult.Text = FormatResult(result);
             isDefaultInput = true;
 
@@ -395,12 +426,12 @@ namespace Bai6
             }
             else
             {
-                // Case 2: Ngay sau khi nhấn = (hoặc 1/x, Sqrt, x²)
-                // Lấy giá trị hiện tại (là kết quả)
-                string originalValueStr = FormatResult(firstValue);
+                // Case 2: Ngay sau khi nhấn = (hoặc 1/x, Sqrt, x²) (CẬP NHẬT LOGIC)
+                string mathExpression = GetMathExpressionForSingleOp(); // Lấy biểu thức
+
                 firstValue = -firstValue; // Đổi dấu giá trị kết quả
                 textBoxResult.Text = FormatResult(firstValue); // Cập nhật hiển thị
-                MathWrite($"negate({originalValueStr})"); // Cập nhật thanh math
+                MathWrite($"negate({mathExpression})"); // Sử dụng biểu thức
                 isDefaultInput = true; // Sẵn sàng cho phép tính mới
             }
         }
@@ -433,36 +464,41 @@ namespace Bai6
             else
             {
                 // TH: Bấm "5 + 3 = = =" (lặp lại phép toán)
-                // firstValue là 8, secondValue là 3
+                // firstValue là 8, secondValue là 3, mathType là Add
                 string currentFirstValStr = FormatResult(firstValue);
-                string op = "";
-                // *** SỬA LỖI: Chỉ tìm toán tử nếu mathType không phải là None ***
-                if (mathType != MathType.None)
-                {
-                    if (textBoxPre.Text.Contains(" + ")) op = "+";
-                    else if (textBoxPre.Text.Contains(" - ")) op = "-";
-                    else if (textBoxPre.Text.Contains(" × ")) op = "×";
-                    else if (textBoxPre.Text.Contains(" ÷ ")) op = "÷";
-                }
 
-                // --- SỬA LỖI ---
-                // Nếu không có phép toán (ví dụ: 5 = =)
-                // thì không làm gì cả, chỉ giữ nguyên trạng thái.
-                if (op == "" || mathType == MathType.None)
+                // --- SỬA LỖI THEO YÊU CẦU ---
+                // Lấy toán tử trực tiếp từ mathType, không parse chuỗi textBoxPre.Text
+                string op = "";
+                switch (mathType)
                 {
-                    isDefaultInput = true; // Đảm bảo cờ này được set
-                    // Giữ nguyên MathWrite("5 =")
-                    return; // Thoát sớm
+                    case MathType.Add: op = "+"; break;
+                    case MathType.Minus: op = "-"; break;
+                    case MathType.Times: op = "×"; break;
+                    case MathType.Divide: op = "÷"; break;
+                    case MathType.None:
+                        // Trường hợp "5 = =", không làm gì cả (lỗi "5 0 =" đã sửa)
+                        isDefaultInput = true;
+                        return; // Thoát sớm
                 }
                 // --- KẾT THÚC SỬA LỖI ---
 
+                // (Code cũ bị thay thế)
+                // string op = "";
+                // if (mathType != MathType.None) ... (parsing logic) ...
+                // if (op == "" || mathType == MathType.None) ... (return logic) ...
+
+                // Hàm này sẽ dùng (firstValue = 8) và (secondValue = 3) để tính toán
                 if (!CalculateBinaryToFirstValue())
                 {
                     HandleCalculationError("Cannot divide by zero");
                     return;
                 }
+                // firstValue bây giờ là 11
 
+                // Hiển thị: "8 + 3 ="
                 MathWrite($"{currentFirstValStr} {op} {FormatResult(secondValue)} =");
+                // Hiển thị kết quả: 11
                 textBoxResult.Text = FormatResult(firstValue);
             }
             isDefaultInput = true;
@@ -527,13 +563,14 @@ namespace Bai6
             SetUpForBinaryOperator(MathType.Divide);
         }
 
-        // --- THÊM LOGIC MỚI ---
+        // --- THÊM LOGIC MỚI (CẬP NHẬT LOGIC) ---
         private void buttonSquare_Click(object sender, EventArgs e)
         {
             double currentValue = GetValue();
+            string mathExpression = GetMathExpressionForSingleOp(); // Lấy biểu thức
             double result = currentValue * currentValue;
 
-            MathWrite($"sqr({currentValue})");
+            MathWrite($"sqr({mathExpression})"); // Sử dụng biểu thức
             textBoxResult.Text = FormatResult(result);
             isDefaultInput = true;
 
@@ -554,7 +591,7 @@ namespace Bai6
             }
         }
 
-        // --- THÊM LOGIC MỚI ---
+        // --- THÊM LOGIC MỚI (CẬP NHẬT LOGIC) ---
         private void buttonSqrt_Click(object sender, EventArgs e)
         {
             double currentValue = GetValue();
@@ -566,8 +603,9 @@ namespace Bai6
                 return;
             }
 
+            string mathExpression = GetMathExpressionForSingleOp(); // Lấy biểu thức
             double result = Math.Sqrt(currentValue);
-            MathWrite($"sqrt({currentValue})");
+            MathWrite($"sqrt({mathExpression})"); // Sử dụng biểu thức
             textBoxResult.Text = FormatResult(result);
             isDefaultInput = true;
 
