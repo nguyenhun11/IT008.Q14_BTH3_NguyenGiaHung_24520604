@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.buttonChange = new System.Windows.Forms.Button();
+            this.title = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // buttonChange
@@ -46,11 +47,24 @@
             this.buttonChange.UseVisualStyleBackColor = false;
             this.buttonChange.Click += new System.EventHandler(this.buttonChange_Click);
             // 
+            // title
+            // 
+            this.title.BackColor = System.Drawing.Color.MistyRose;
+            this.title.Dock = System.Windows.Forms.DockStyle.Top;
+            this.title.Font = new System.Drawing.Font("Segoe UI", 22.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.title.Location = new System.Drawing.Point(0, 0);
+            this.title.Name = "title";
+            this.title.Size = new System.Drawing.Size(882, 60);
+            this.title.TabIndex = 1;
+            this.title.Text = "Change random color";
+            this.title.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // ChangeColor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(882, 553);
+            this.Controls.Add(this.title);
             this.Controls.Add(this.buttonChange);
             this.Name = "ChangeColor";
             this.Text = "ChangeColor";
@@ -61,6 +75,7 @@
         #endregion
 
         private System.Windows.Forms.Button buttonChange;
+        private System.Windows.Forms.Label title;
     }
 }
 

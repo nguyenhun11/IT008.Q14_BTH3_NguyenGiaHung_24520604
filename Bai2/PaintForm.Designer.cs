@@ -45,7 +45,7 @@
             this.title.ForeColor = System.Drawing.Color.Black;
             this.title.Location = new System.Drawing.Point(0, 0);
             this.title.Name = "title";
-            this.title.Size = new System.Drawing.Size(730, 53);
+            this.title.Size = new System.Drawing.Size(730, 60);
             this.title.TabIndex = 0;
             this.title.Text = "Paint";
             this.title.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -112,9 +112,9 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panelContent.BackColor = System.Drawing.Color.Honeydew;
-            this.panelContent.Location = new System.Drawing.Point(11, 56);
+            this.panelContent.Location = new System.Drawing.Point(11, 63);
             this.panelContent.Name = "panelContent";
-            this.panelContent.Size = new System.Drawing.Size(707, 375);
+            this.panelContent.Size = new System.Drawing.Size(707, 368);
             this.panelContent.TabIndex = 5;
             // 
             // PaintForm

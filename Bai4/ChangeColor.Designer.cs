@@ -43,7 +43,7 @@
             this.formatToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(907, 31);
+            this.menuStrip1.Size = new System.Drawing.Size(767, 31);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -61,7 +61,7 @@
             // 
             this.colorToolStripMenuItem.BackColor = System.Drawing.Color.LightGray;
             this.colorToolStripMenuItem.Name = "colorToolStripMenuItem";
-            this.colorToolStripMenuItem.Size = new System.Drawing.Size(224, 28);
+            this.colorToolStripMenuItem.Size = new System.Drawing.Size(135, 28);
             this.colorToolStripMenuItem.Text = "&Color";
             this.colorToolStripMenuItem.Click += new System.EventHandler(this.colorToolStripMenuItem_Click);
             // 
@@ -75,16 +75,16 @@
             this.title.ForeColor = System.Drawing.Color.Black;
             this.title.Location = new System.Drawing.Point(0, 31);
             this.title.Name = "title";
-            this.title.Size = new System.Drawing.Size(907, 58);
+            this.title.Size = new System.Drawing.Size(767, 60);
             this.title.TabIndex = 1;
-            this.title.Text = "ColorDialog";
+            this.title.Text = "Change color by ColorDialog";
             this.title.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // ChangeColor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(907, 578);
+            this.ClientSize = new System.Drawing.Size(767, 601);
             this.Controls.Add(this.title);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
