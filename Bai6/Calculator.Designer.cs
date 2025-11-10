@@ -246,6 +246,7 @@
             this.buttonSquare.TabIndex = 4;
             this.buttonSquare.Text = "x²";
             this.buttonSquare.UseVisualStyleBackColor = false;
+            this.buttonSquare.Click += new System.EventHandler(this.buttonSquare_Click);
             // 
             // buttonSqrt
             // 
@@ -257,6 +258,7 @@
             this.buttonSqrt.TabIndex = 4;
             this.buttonSqrt.Text = "√x";
             this.buttonSqrt.UseVisualStyleBackColor = false;
+            this.buttonSqrt.Click += new System.EventHandler(this.buttonSqrt_Click);
             // 
             // buttonPlus
             // 

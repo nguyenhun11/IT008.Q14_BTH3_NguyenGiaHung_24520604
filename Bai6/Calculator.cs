@@ -387,8 +387,22 @@ namespace Bai6
 
         private void buttonPm_Click(object sender, EventArgs e)
         {
-            if (isDefaultInput && textBoxResult.Text == "0") return; // Không đổi dấu số 0
-            ToggleSign();
+            if (isTypingFirstValue || isTypingSecondValue)
+            {
+                // Case 1: Đang gõ số (hoặc ngay sau khi nhấn +, -, *, /)
+                if (isDefaultInput && textBoxResult.Text == "0") return; // Không đổi dấu số 0
+                ToggleSign(); // Chỉ đổi dấu số trên màn hình
+            }
+            else
+            {
+                // Case 2: Ngay sau khi nhấn = (hoặc 1/x, Sqrt, x²)
+                // Lấy giá trị hiện tại (là kết quả)
+                string originalValueStr = FormatResult(firstValue);
+                firstValue = -firstValue; // Đổi dấu giá trị kết quả
+                textBoxResult.Text = FormatResult(firstValue); // Cập nhật hiển thị
+                MathWrite($"negate({originalValueStr})"); // Cập nhật thanh math
+                isDefaultInput = true; // Sẵn sàng cho phép tính mới
+            }
         }
 
         // --- SỬA LỖI 2: Dùng FormatResult và kiểm tra lỗi ---
@@ -511,6 +525,67 @@ namespace Bai6
         private void buttonDivide_Click(object sender, EventArgs e)
         {
             SetUpForBinaryOperator(MathType.Divide);
+        }
+
+        // --- THÊM LOGIC MỚI ---
+        private void buttonSquare_Click(object sender, EventArgs e)
+        {
+            double currentValue = GetValue();
+            double result = currentValue * currentValue;
+
+            MathWrite($"sqr({currentValue})");
+            textBoxResult.Text = FormatResult(result);
+            isDefaultInput = true;
+
+            // Cập nhật giá trị nền để tiếp tục tính toán
+            if (isTypingFirstValue)
+            {
+                firstValue = result;
+                isTypingFirstValue = false; // Coi như đã nhập xong số đầu tiên
+            }
+            else if (isTypingSecondValue)
+            {
+                secondValue = result;
+                // Vẫn giữ isTypingSecondValue = true, chờ phép toán
+            }
+            else // Trường hợp vừa bấm =
+            {
+                firstValue = result;
+            }
+        }
+
+        // --- THÊM LOGIC MỚI ---
+        private void buttonSqrt_Click(object sender, EventArgs e)
+        {
+            double currentValue = GetValue();
+
+            // Kiểm tra lỗi căn bậc hai của số âm
+            if (currentValue < 0)
+            {
+                HandleCalculationError("Invalid input");
+                return;
+            }
+
+            double result = Math.Sqrt(currentValue);
+            MathWrite($"sqrt({currentValue})");
+            textBoxResult.Text = FormatResult(result);
+            isDefaultInput = true;
+
+            // Cập nhật giá trị nền để tiếp tục tính toán
+            if (isTypingFirstValue)
+            {
+                firstValue = result;
+                isTypingFirstValue = false; // Coi như đã nhập xong số đầu tiên
+            }
+            else if (isTypingSecondValue)
+            {
+                secondValue = result;
+                // Vẫn giữ isTypingSecondValue = true, chờ phép toán
+            }
+            else // Trường hợp vừa bấm =
+            {
+                firstValue = result;
+            }
         }
     }
 }
