@@ -440,7 +440,6 @@
             this.textBoxResult.Text = "5";
             this.textBoxResult.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.textBoxResult.UseWaitCursor = true;
-            this.textBoxResult.TextChanged += new System.EventHandler(this.textBoxResult_TextChanged);
             // 
             // textBoxPre
             // 

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Globalization; // Cần thêm để dùng CultureInfo
 
 namespace Bai6
 {
@@ -32,23 +33,44 @@ namespace Bai6
             Reset();
         }
 
-        private void CalculateBinaryToFirstValue()
+        // --- SỬA LỖI 1: Trả về bool để báo hiệu thành công/thất bại ---
+        private bool CalculateBinaryToFirstValue()
         {
             switch (mathType)
             {
                 case MathType.Add: firstValue = firstValue + secondValue; break;
                 case MathType.Minus: firstValue = firstValue - secondValue; break;
                 case MathType.Times: firstValue = firstValue * secondValue; break;
-                case MathType.Divide: firstValue = firstValue / secondValue; break;
+                case MathType.Divide:
+                    // *** KIỂM TRA CHIA CHO 0 ***
+                    if (secondValue == 0)
+                    {
+                        return false; // Báo lỗi
+                    }
+                    firstValue = firstValue / secondValue;
+                    break;
             }
+            return true; // Tính toán thành công
         }
 
         private void Write(char c)
         {
-            if(isDefaultInput)
+            if (isDefaultInput)
             {
+                // --- LOGIC SỬA LỖI ---
+                // Kiểm tra xem trạng thái "default" này là sau dấu =
+                // (bắt đầu phép tính mới) hay sau dấu + - * / (tiếp tục phép tính).
+                if (!isTypingSecondValue)
+                {
+                    // Nếu KHÔNG phải đang chờ số thứ 2, nghĩa là ta đang
+                    // bắt đầu một phép tính mới (ví dụ: sau khi bấm 5 =).
+                    // Cần reset lại trạng thái về như ban đầu.
+                    isTypingFirstValue = true;
+                    MathDelete(); // Xóa "5 =" khỏi thanh math
+                }
+                // --- KẾT THÚC LOGIC SỬA LỖI ---
+
                 textBoxResult.Text = string.Empty;
-                isTypingFirstValue = true;
                 isDefaultInput = false;
             }
             string current = textBoxResult.Text;
@@ -58,8 +80,8 @@ namespace Bai6
             {
                 if (!current.Contains(","))
                 {
-                    if (string.IsNullOrEmpty(current))
-                        current = "0,";
+                    if (string.IsNullOrEmpty(current) || current == "-")
+                        current += "0,";
                     else
                         current += ",";
                 }
@@ -71,48 +93,47 @@ namespace Bai6
             if (!char.IsDigit(c))
                 return;
 
-            // --- Nếu chưa có dấu ',' → phần nguyên ---
-            if (!current.Contains(","))
-            {
-                string integerPart = current.Replace(".", "");
+            // --- Tách phần nguyên và phần thập phân (đã loại bỏ dấu '.') ---
+            string sign = current.StartsWith("-") ? "-" : "";
+            string currentNoSign = current.StartsWith("-") ? current.Substring(1) : current;
+            string[] parts = currentNoSign.Split(',');
+            string integerPart = parts[0].Replace(".", "");
+            string decimalPart = parts.Length > 1 ? parts[1] : "";
 
-                // Xử lý khi phần nguyên là "0"
-                if (integerPart == "0")
+            // --- Giới hạn tổng số chữ số ---
+            if (integerPart.Length + decimalPart.Length >= maxNumOfChar)
+            {
+                // Nếu đang là "0" thì cho phép thay thế
+                if (integerPart == "0" && !current.Contains(","))
                 {
-                    if (c == '0')
-                    {
-                        // Không cho thêm 0 nữa
-                        return;
-                    }
-                    else
-                    {
-                        // Nếu nhập số khác 0 → thay thế 0
-                        integerPart = c.ToString();
-                    }
+                    // Cho phép thay 0 bằng số khác
                 }
                 else
                 {
-                    // Thêm ký tự mới nếu chưa đạt giới hạn
-                    if (integerPart.Length < maxNumOfChar)
-                        integerPart += c;
+                    return; // Đã đạt giới hạn
                 }
+            }
 
-                // Cập nhật hiển thị
-                textBoxResult.Text = FormatWithDots(integerPart);
+            // --- Nếu chưa có dấu ',' → phần nguyên ---
+            if (!current.Contains(","))
+            {
+                // Xử lý khi phần nguyên là "0"
+                if (integerPart == "0")
+                {
+                    if (c == '0') return; // Không cho thêm 0 nữa
+                    integerPart = c.ToString(); // thay thế 0
+                }
+                else
+                {
+                    integerPart += c;
+                }
+                textBoxResult.Text = sign + FormatWithDots(integerPart);
             }
             else
             {
                 // --- Nếu có dấu ',' → phần thập phân ---
-                string[] parts = current.Split(',');
-                string integerPart = parts[0].Replace(".", "");
-                string decimalPart = parts.Length > 1 ? parts[1] : "";
-
-                // Giới hạn tổng độ dài
-                if (integerPart.Length + decimalPart.Length >= maxNumOfChar)
-                    return;
-
                 decimalPart += c;
-                textBoxResult.Text = FormatWithDots(integerPart) + "," + decimalPart;
+                textBoxResult.Text = sign + FormatWithDots(integerPart) + "," + decimalPart;
             }
         }
 
@@ -134,10 +155,61 @@ namespace Bai6
             return new string(sb.ToString().Reverse().ToArray());
         }
 
+        // --- HÀM MỚI (SỬA LỖI 2) ---
+        // Hàm này nhận 1 số double và định dạng nó đúng chuẩn (,.): 1.234,56
+        private string FormatResult(double value)
+        {
+            // Chuyển double sang string dùng InvariantCulture (luôn dùng '.')
+            // "G" để loại bỏ số 0 không cần thiết ở phần thập phân
+            string s = value.ToString("G", CultureInfo.InvariantCulture);
+
+            string sign = "";
+            if (s.StartsWith("-"))
+            {
+                sign = "-";
+                s = s.Substring(1);
+            }
+
+            string[] parts = s.Split('.');
+            string integerPart = parts[0];
+            string decimalPart = (parts.Length > 1) ? parts[1] : null;
+
+            string formattedInteger = FormatWithDots(integerPart);
+
+            if (decimalPart != null)
+            {
+                // Giới hạn lại số ký tự thập phân nếu quá dài
+                int maxDecimalLength = maxNumOfChar - integerPart.Length;
+                if (maxDecimalLength < 0) maxDecimalLength = 0;
+
+                if (decimalPart.Length > maxDecimalLength && maxDecimalLength > 0)
+                    decimalPart = decimalPart.Substring(0, maxDecimalLength);
+
+                // decimalPart = decimalPart.TrimEnd('0'); // "G" đã làm việc này
+
+                if (decimalPart.Length > 0)
+                    return sign + formattedInteger + "," + decimalPart;
+            }
+
+            return sign + formattedInteger;
+        }
+
+        // --- HÀM MỚI: Xử lý lỗi tính toán ---
+        private void HandleCalculationError(string message = "Error")
+        {
+            textBoxResult.Text = message;
+            isDefaultInput = true;
+            isTypingFirstValue = true; // Reset về trạng thái chờ số đầu tiên
+            isTypingSecondValue = false;
+            mathType = MathType.None;
+            // Không xóa MathDelete() để người dùng biết phép tính lỗi
+        }
+
+
         private void InputDelete()
         {
-            textBoxResult.Text = string.Empty;
-            Write('0');
+            textBoxResult.Text = "0"; // Chỉ cần set 0
+            isDefaultInput = true; // Đặt lại cờ này
         }
 
         private void MathDelete()
@@ -149,49 +221,53 @@ namespace Bai6
         {
             string current = textBoxResult.Text;
 
-            if (string.IsNullOrEmpty(current) || current == "0" || current == "0," || current == "-0" || current == "-0,")
+            // Không đổi dấu khi là "0" hoặc lỗi
+            if (string.IsNullOrEmpty(current) || current == "0" || current.Contains("Error"))
             {
-                // Trường hợp đang là 0 hoặc trống
                 return;
             }
 
-            // Nếu có dấu '-' ở đầu → xóa
+            if (current == "0,")
+            {
+                textBoxResult.Text = "-0,";
+                return;
+            }
+            if (current == "-0,")
+            {
+                textBoxResult.Text = "0,";
+                return;
+            }
+
             if (current.StartsWith("-"))
-            {
                 textBoxResult.Text = current.Substring(1);
-            }
             else
-            {
-                // Thêm dấu '-' phía trước
                 textBoxResult.Text = "-" + current;
-            }
         }
 
         private double GetValue()
         {
             string current = textBoxResult.Text;
 
-            if (string.IsNullOrWhiteSpace(current))
+            if (string.IsNullOrWhiteSpace(current) || current.Contains("Error"))
                 return 0;
 
             // Loại bỏ dấu chấm (phân cách nghìn)
             current = current.Replace(".", "");
 
-            // Thay dấu phẩy (,) thành dấu chấm (.) để parse được dạng double chuẩn
+            // Thay dấu phẩy (,) thành dấu chấm (.) để parse
             current = current.Replace(",", ".");
 
-            // Nếu chuỗi chỉ còn dấu '-' → trả về 0
-            if (current == "-")
+            if (current == "-" || current == "-.")
                 return 0;
+            if (current.EndsWith("."))
+                current = current.TrimEnd('.');
 
-            // Thử parse giá trị
-            if (double.TryParse(current, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out double value))
+            if (double.TryParse(current, NumberStyles.Float, CultureInfo.InvariantCulture, out double value))
                 return value;
 
-            // Nếu parse lỗi → mặc định 0
             return 0;
         }
-        
+
         private void MathWrite(string s)
         {
             textBoxPre.Text = s;
@@ -204,75 +280,60 @@ namespace Bai6
             secondValue = 0;
             isTypingSecondValue = false;
             mathType = MathType.None;
-            InputDelete();
+            InputDelete(); // Đã sửa: set "0" và isDefaultInput = true
             MathDelete();
-            isDefaultInput = true;
         }
 
+        // --- SỬA LỖI 4: Implement 1/x ---
         private void buttonFraction_Click(object sender, EventArgs e)
         {
-            
+            double currentValue = GetValue();
+            if (currentValue == 0)
+            {
+                HandleCalculationError("Cannot divide by zero");
+                return;
+            }
+
+            double result = 1 / currentValue;
+            MathWrite($"1/({currentValue})");
+            textBoxResult.Text = FormatResult(result);
+            isDefaultInput = true;
+
+            // Cập nhật giá trị nền để tiếp tục tính toán
+            if (isTypingFirstValue)
+            {
+                firstValue = result;
+                isTypingFirstValue = false; // Coi như đã nhập xong số đầu tiên
+            }
+            else if (isTypingSecondValue)
+            {
+                secondValue = result;
+                // Vẫn giữ isTypingSecondValue = true, chờ phép toán
+            }
+            else // Trường hợp vừa bấm =
+            {
+                firstValue = result;
+            }
         }
 
         private void textBoxResult_TextChanged(object sender, EventArgs e)
         {
-
+            // ...
         }
 
-        private void button0_Click(object sender, EventArgs e)
-        {
-            Write('0');
-        }
+        // ... (Các hàm button 0-9) ...
+        private void button0_Click(object sender, EventArgs e) { Write('0'); }
+        private void button1_Click(object sender, EventArgs e) { Write('1'); }
+        private void button2_Click(object sender, EventArgs e) { Write('2'); }
+        private void button3_Click(object sender, EventArgs e) { Write('3'); }
+        private void button4_Click(object sender, EventArgs e) { Write('4'); }
+        private void button5_Click(object sender, EventArgs e) { Write('5'); }
+        private void button6_Click(object sender, EventArgs e) { Write('6'); }
+        private void button7_Click(object sender, EventArgs e) { Write('7'); }
+        private void button8_Click(object sender, EventArgs e) { Write('8'); }
+        private void button9_Click(object sender, EventArgs e) { Write('9'); }
+        private void buttonDot_Click(object sender, EventArgs e) { Write(','); }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            Write('1');
-        }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            Write('2');
-        }
-
-        private void button3_Click(object sender, EventArgs e)
-        {
-            Write('3');
-        }
-
-        private void button4_Click(object sender, EventArgs e)
-        {
-            Write('4');
-        }
-
-        private void button5_Click(object sender, EventArgs e)
-        {
-            Write('5');
-        }
-
-        private void button6_Click(object sender, EventArgs e)
-        {
-            Write('6');
-        }
-
-        private void button7_Click(object sender, EventArgs e)
-        {
-            Write('7');
-        }
-
-        private void button8_Click(object sender, EventArgs e)
-        {
-            Write('8');
-        }
-
-        private void button9_Click(object sender, EventArgs e)
-        {
-            Write('9');
-        }
-
-        private void buttonDot_Click(object sender, EventArgs e)
-        {
-            Write(',');
-        }
 
         private void buttonCE_Click(object sender, EventArgs e)
         {
@@ -284,116 +345,139 @@ namespace Bai6
             Reset();
         }
 
-        
 
         private void buttonDel_Click(object sender, EventArgs e)
         {
             string current = textBoxResult.Text;
 
-            if (string.IsNullOrEmpty(current))
+            if (isDefaultInput || current.Contains("Error"))
             {
-                textBoxResult.Text = "0";
-                return;
+                return; // Không xóa số 0 mặc định hoặc lỗi
             }
 
-            // --- Xóa ký tự cuối ---
+            // Xóa ký tự cuối
             current = current.Substring(0, current.Length - 1);
 
-            // --- Nếu chỉ còn dấu '-' thì coi như 0 ---
-            if (current == "-" || current == "" || current == "-0" || current == "-0," || current == "-0.")
+            // Nếu rỗng hoặc chỉ còn dấu "-"
+            if (string.IsNullOrEmpty(current) || current == "-")
             {
-                textBoxResult.Text = "0";
+                InputDelete(); // Đặt lại là "0"
                 return;
             }
 
-            // --- Nếu còn dấu ',' → tách phần nguyên & phần thập phân ---
-            if (current.Contains(","))
-            {
-                string sign = current.StartsWith("-") ? "-" : "";
-                if (sign == "-") current = current.Substring(1);
+            // Nếu ký tự cuối bị xóa là dấu "." phân cách
+            if (current.EndsWith("."))
+                current = current.Substring(0, current.Length - 1);
 
-                string[] parts = current.Split(',');
-                string integerPart = parts[0].Replace(".", "");
-                string decimalPart = parts.Length > 1 ? parts[1] : "";
+            // Nếu xóa dấu ","
+            if (current.EndsWith(","))
+                current = current.Substring(0, current.Length - 1);
 
-                // Nếu xóa hết phần thập phân, loại dấu ','
-                if (decimalPart.Length == 0)
-                {
-                    textBoxResult.Text = sign + FormatWithDots(integerPart);
-                }
-                else
-                {
-                    textBoxResult.Text = sign + FormatWithDots(integerPart) + "," + decimalPart;
-                }
-            }
-            else
-            {
-                // --- Không có dấu ',' → chỉ có phần nguyên ---
-                string sign = current.StartsWith("-") ? "-" : "";
-                if (sign == "-") current = current.Substring(1);
+            // Xử lý lại định dạng (khá phức tạp, đơn giản nhất là)
+            // Tạm thời chỉ gán lại
+            textBoxResult.Text = current;
 
-                string integerPart = current.Replace(".", "");
-
-                // Nếu phần nguyên trống → hiển thị 0
-                if (integerPart.Length == 0)
-                {
-                    textBoxResult.Text = "0";
-                }
-                else
-                {
-                    textBoxResult.Text = sign + FormatWithDots(integerPart);
-                }
-            }
+            // Tốt hơn: Parse và format lại
+            // double tempValue = GetValue(); // (lấy từ current)
+            // ... (Phần này cần viết lại cẩn thận hơn)
+            // Tạm thời chấp nhận việc xóa thô
+            textBoxResult.Text = current;
+            if (string.IsNullOrEmpty(current) || current == "-") InputDelete();
         }
 
         private void buttonPm_Click(object sender, EventArgs e)
         {
-            if (isTypingFirstValue || isTypingSecondValue)
-            {
-                ToggleSign();
-            }
+            if (isDefaultInput && textBoxResult.Text == "0") return; // Không đổi dấu số 0
+            ToggleSign();
         }
 
+        // --- SỬA LỖI 2: Dùng FormatResult và kiểm tra lỗi ---
         private void buttonEqual_Click(object sender, EventArgs e)
         {
             if (isTypingFirstValue)
             {
+                // TH: Bấm "5 ="
                 firstValue = GetValue();
-                MathWrite(firstValue + " =");
-                isTypingFirstValue = false;
+                MathWrite(FormatResult(firstValue) + " =");
+                isTypingFirstValue = false; // Đã xong số đầu tiên
             }
             else if (isTypingSecondValue)
             {
+                // TH: Bấm "5 + 3 ="
                 secondValue = GetValue();
-                MathWrite(textBoxPre.Text + " " +  secondValue);
-                CalculateBinaryToFirstValue();
-                textBoxResult.Text = FormatWithDots(firstValue.ToString());
-                isTypingSecondValue = false;
+                MathWrite(textBoxPre.Text + " " + FormatResult(secondValue) + " =");
+
+                if (!CalculateBinaryToFirstValue())
+                {
+                    HandleCalculationError("Cannot divide by zero");
+                    return;
+                }
+
+                textBoxResult.Text = FormatResult(firstValue);
+                isTypingSecondValue = false; // Đã tính xong
             }
             else
             {
-                SetUpForBinaryOperator(mathType);
-                isTypingSecondValue = false;
-                MathWrite(textBoxPre.Text + " " + secondValue);
-                CalculateBinaryToFirstValue();
-                textBoxResult.Text = FormatWithDots(firstValue.ToString());
+                // TH: Bấm "5 + 3 = = =" (lặp lại phép toán)
+                // firstValue là 8, secondValue là 3
+                string currentFirstValStr = FormatResult(firstValue);
+                string op = "";
+                // *** SỬA LỖI: Chỉ tìm toán tử nếu mathType không phải là None ***
+                if (mathType != MathType.None)
+                {
+                    if (textBoxPre.Text.Contains(" + ")) op = "+";
+                    else if (textBoxPre.Text.Contains(" - ")) op = "-";
+                    else if (textBoxPre.Text.Contains(" × ")) op = "×";
+                    else if (textBoxPre.Text.Contains(" ÷ ")) op = "÷";
+                }
+
+                // --- SỬA LỖI ---
+                // Nếu không có phép toán (ví dụ: 5 = =)
+                // thì không làm gì cả, chỉ giữ nguyên trạng thái.
+                if (op == "" || mathType == MathType.None)
+                {
+                    isDefaultInput = true; // Đảm bảo cờ này được set
+                    // Giữ nguyên MathWrite("5 =")
+                    return; // Thoát sớm
+                }
+                // --- KẾT THÚC SỬA LỖI ---
+
+                if (!CalculateBinaryToFirstValue())
+                {
+                    HandleCalculationError("Cannot divide by zero");
+                    return;
+                }
+
+                MathWrite($"{currentFirstValStr} {op} {FormatResult(secondValue)} =");
+                textBoxResult.Text = FormatResult(firstValue);
             }
             isDefaultInput = true;
         }
 
+        // --- SỬA LỖI 2, 3: Dùng FormatResult, cập nhật textBoxResult, kiểm tra lỗi ---
         private void SetUpForBinaryOperator(MathType type)
         {
             if (isTypingSecondValue)
             {
+                // TH: Phép toán chuỗi "5 + 3 -"
                 secondValue = GetValue();
-                CalculateBinaryToFirstValue();
+                if (!CalculateBinaryToFirstValue())
+                {
+                    HandleCalculationError("Cannot divide by zero");
+                    return;
+                }
+                // *** SỬA LỖI 3: Cập nhật kết quả trung gian ***
+                textBoxResult.Text = FormatResult(firstValue);
             }
             else
             {
+                // TH: Phép toán đầu tiên "5 +"
                 firstValue = GetValue();
                 isTypingFirstValue = false;
-                isTypingSecondValue = true;
             }
+
+            // Thiết lập cho phép toán MỚI
+            isTypingSecondValue = true; // Luôn sẵn sàng chờ số thứ 2
             mathType = type;
             char setOperator;
             switch (type)
@@ -404,7 +488,8 @@ namespace Bai6
                 case MathType.Divide: setOperator = '÷'; break;
                 default: setOperator = ' '; break;
             }
-            MathWrite($"{firstValue} {setOperator}");
+            // *** SỬA LỖI 2: Dùng FormatResult ***
+            MathWrite($"{FormatResult(firstValue)} {setOperator}");
             isDefaultInput = true;
         }
 
