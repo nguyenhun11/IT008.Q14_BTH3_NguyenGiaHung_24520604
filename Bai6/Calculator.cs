@@ -16,6 +16,7 @@ namespace Bai6
     {
         private int maxNumOfChar = 10;
 
+        #region Các biến tính toán
         private double firstValue;
         private bool isTypingFirstValue = true;
         private enum MathType
@@ -27,19 +28,17 @@ namespace Bai6
         private bool isTypingSecondValue = false;
         private bool isDefaultInput = true;
 
-        // --- THÊM BIẾN BỘ NHỚ ---
         private double memoryValue = 0;
+        #endregion
 
         public Calculator()
         {
             InitializeComponent();
             Reset();
-            // Bạn có thể thêm một Label (ví dụ: labelMemory)
-            // và gọi UpdateMemoryLabel() ở đây và trong các hàm M_
             UpdateMemoryLabel();
         }
 
-        // --- SỬA LỖI 1: Trả về bool để báo hiệu thành công/thất bại ---
+        //Hàm tính toán toán tử 2 ngôi
         private bool CalculateBinaryToFirstValue()
         {
             switch (mathType)
@@ -48,7 +47,6 @@ namespace Bai6
                 case MathType.Minus: firstValue = firstValue - secondValue; break;
                 case MathType.Times: firstValue = firstValue * secondValue; break;
                 case MathType.Divide:
-                    // *** KIỂM TRA CHIA CHO 0 ***
                     if (secondValue == 0)
                     {
                         return false; // Báo lỗi
@@ -58,30 +56,26 @@ namespace Bai6
             }
             return true; // Tính toán thành công
         }
-
+        #region Phương thức xử lý nhập, xuất
+        //Phương thức nhập số vào khung input
         private void Write(char c)
         {
             if (isDefaultInput)
             {
-                // --- LOGIC SỬA LỖI ---
-                // Kiểm tra xem trạng thái "default" này là sau dấu =
-                // (bắt đầu phép tính mới) hay sau dấu + - * / (tiếp tục phép tính).
+                // Trong khung input là số mặc định, khi nhập số khác thì xóa số mặc định
                 if (!isTypingSecondValue)
                 {
-                    // Nếu KHÔNG phải đang chờ số thứ 2, nghĩa là ta đang
-                    // bắt đầu một phép tính mới (ví dụ: sau khi bấm 5 =).
-                    // Cần reset lại trạng thái về như ban đầu.
+                    // Nếu đang chờ nhập số thứ 2, chỉ xóa số mặc định khỏi input
+                    // Nếu không chờ số thứ 2, nghĩa là đang bắt đầu phép tính mới, gán đây là số thứ 1
                     isTypingFirstValue = true;
                     MathDelete(); // Xóa "5 =" khỏi thanh math
                 }
-                // --- KẾT THÚC LOGIC SỬA LỖI ---
-
                 textBoxResult.Text = string.Empty;
                 isDefaultInput = false;
             }
             string current = textBoxResult.Text;
 
-            // --- Xử lý nhập dấu phẩy (thập phân) ---
+            // Xử lý nhập dấu phẩy (thập phân)
             if (c == ',')
             {
                 if (!current.Contains(","))
@@ -95,11 +89,11 @@ namespace Bai6
                 return;
             }
 
-            // --- Chỉ cho phép ký tự số ---
+            // Chỉ cho phép ký tự số
             if (!char.IsDigit(c))
                 return;
 
-            // --- Tách phần nguyên và phần thập phân (đã loại bỏ dấu '.') ---
+            // Tách phần nguyên và phần thập phân (đã loại bỏ dấu '.') 
             string sign = current.StartsWith("-") ? "-" : "";
             string currentNoSign = current.StartsWith("-") ? current.Substring(1) : current;
             string[] parts = currentNoSign.Split(',');
@@ -120,10 +114,10 @@ namespace Bai6
                 }
             }
 
-            // --- Nếu chưa có dấu ',' → phần nguyên ---
+            // Nếu chưa có dấu , thì là phần nguyên
             if (!current.Contains(","))
             {
-                // Xử lý khi phần nguyên là "0"
+                // Xử lý khi phần nguyên là 0
                 if (integerPart == "0")
                 {
                     if (c == '0') return; // Không cho thêm 0 nữa
@@ -137,12 +131,13 @@ namespace Bai6
             }
             else
             {
-                // --- Nếu có dấu ',' → phần thập phân ---
+                // Nếu có dấu , là phần thập phân
                 decimalPart += c;
                 textBoxResult.Text = sign + FormatWithDots(integerPart) + "," + decimalPart;
             }
         }
 
+        // Hiệu chỉnh dấu . cho phần nguyên
         private string FormatWithDots(string number)
         {
             if (string.IsNullOrEmpty(number))
@@ -161,8 +156,7 @@ namespace Bai6
             return new string(sb.ToString().Reverse().ToArray());
         }
 
-        // --- HÀM MỚI (SỬA LỖI 2) ---
-        // Hàm này nhận 1 số double và định dạng nó đúng chuẩn (,.): 1.234,56
+        // Hiệu chỉnh kết quả
         private string FormatResult(double value)
         {
             // Xử lý trường hợp vô cực hoặc NaN (Not-a-Number)
@@ -224,7 +218,7 @@ namespace Bai6
             return sign + formattedInteger;
         }
 
-        // --- HÀM MỚI: Xử lý lỗi tính toán ---
+        // Xử lý lỗi tính toán
         private void HandleCalculationError(string message = "Error")
         {
             textBoxResult.Text = message;
@@ -235,17 +229,81 @@ namespace Bai6
             // Không xóa MathDelete() để người dùng biết phép tính lỗi
         }
 
-
+        // Xóa khung input
         private void InputDelete()
         {
             textBoxResult.Text = "0"; // Chỉ cần set 0
             isDefaultInput = true; // Đặt lại cờ này
         }
 
+        // Viết công thức vào khung math
+        private void MathWrite(string s)
+        {
+            textBoxPre.Text = s;
+        }
+
+        // Xóa khung math
         private void MathDelete()
         {
             textBoxPre.Text = string.Empty;
         }
+
+        #endregion
+
+        #region Các phương thức lấy giá trị
+        // Lấy giá trị từ input
+        private double GetValue()
+        {
+            string current = textBoxResult.Text;
+
+            if (string.IsNullOrWhiteSpace(current) || current.Contains("Error"))
+                return 0;
+
+            // Loại bỏ dấu chấm (phân cách nghìn)
+            current = current.Replace(".", "");
+
+            // Thay dấu phẩy (,) thành dấu chấm (.) để parse
+            current = current.Replace(",", ".");
+
+            if (current == "-" || current == "-.")
+                return 0;
+            if (current.EndsWith("."))
+                current = current.TrimEnd('.');
+
+            if (double.TryParse(current, NumberStyles.Float, CultureInfo.InvariantCulture, out double value))
+                return value;
+
+            return 0;
+        }
+
+        // Lấy biểu thức toán học cho các phép toán 1 ngôi
+        private string GetMathExpressionForSingleOp()
+        {
+            double currentValue = GetValue();
+            string mathExpression;
+
+            // Kiểm tra xem có phải trạng thái "sau khi nhấn =" không
+            // (Không phải đang gõ số 1 VÀ không phải đang gõ số 2)
+            if (!isTypingFirstValue && !isTypingSecondValue)
+            {
+                mathExpression = textBoxPre.Text;
+                // Lọc bỏ dấu " =" ở cuối nếu có
+                if (mathExpression.EndsWith(" ="))
+                {
+                    mathExpression = mathExpression.Substring(0, mathExpression.Length - 2);
+                }
+            }
+            else
+            {
+                // Nếu đang gõ (hoặc gõ số đầu tiên, hoặc gõ số thứ 2)
+                // thì chỉ dùng giá trị hiện tại trên màn hình
+                mathExpression = FormatResult(currentValue);
+            }
+            return mathExpression;
+        }
+        #endregion
+
+        #region Phương thức hỗ trợ tính toán
 
         private void ToggleSign()
         {
@@ -274,64 +332,12 @@ namespace Bai6
                 textBoxResult.Text = "-" + current;
         }
 
-        private double GetValue()
-        {
-            string current = textBoxResult.Text;
-
-            if (string.IsNullOrWhiteSpace(current) || current.Contains("Error"))
-                return 0;
-
-            // Loại bỏ dấu chấm (phân cách nghìn)
-            current = current.Replace(".", "");
-
-            // Thay dấu phẩy (,) thành dấu chấm (.) để parse
-            current = current.Replace(",", ".");
-
-            if (current == "-" || current == "-.")
-                return 0;
-            if (current.EndsWith("."))
-                current = current.TrimEnd('.');
-
-            if (double.TryParse(current, NumberStyles.Float, CultureInfo.InvariantCulture, out double value))
-                return value;
-
-            return 0;
-        }
-
-        // --- HÀM TRỢ GIÚP MỚI ---
-        // Lấy biểu thức toán học cho các phép toán 1 ngôi (sqrt, sqr, 1/x)
-        private string GetMathExpressionForSingleOp()
-        {
-            double currentValue = GetValue();
-            string mathExpression;
-
-            // Kiểm tra xem có phải trạng thái "sau khi nhấn =" không
-            // (Không phải đang gõ số 1 VÀ không phải đang gõ số 2)
-            if (!isTypingFirstValue && !isTypingSecondValue)
-            {
-                mathExpression = textBoxPre.Text;
-                // Lọc bỏ dấu " =" ở cuối nếu có
-                if (mathExpression.EndsWith(" ="))
-                {
-                    mathExpression = mathExpression.Substring(0, mathExpression.Length - 2);
-                }
-                // Nếu không có " =", nó có thể là một biểu thức (vd: "sqrt(9)")
-                // chúng ta sẽ dùng nó
-            }
-            else
-            {
-                // Nếu đang gõ (hoặc gõ số đầu tiên, hoặc gõ số thứ 2)
-                // thì chỉ dùng giá trị hiện tại trên màn hình
-                mathExpression = FormatResult(currentValue);
-            }
-            return mathExpression;
-        }
 
 
-        private void MathWrite(string s)
-        {
-            textBoxPre.Text = s;
-        }
+        #endregion
+
+
+        
 
         private void Reset()
         {
