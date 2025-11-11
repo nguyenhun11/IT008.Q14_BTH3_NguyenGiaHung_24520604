@@ -1,4 +1,6 @@
-﻿namespace Bai7
+﻿using System.Collections.Generic;
+
+namespace Bai7
 {
     partial class Cinema
     {
@@ -49,7 +51,7 @@
             this.button2 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.labelThanhTien = new System.Windows.Forms.Label();
-            this.panel3 = new System.Windows.Forms.Panel();
+            this.panelThanhTien = new System.Windows.Forms.Panel();
             this.textBoxCost = new System.Windows.Forms.TextBox();
             this.buttonChoose = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
@@ -58,7 +60,7 @@
             this.panel2.SuspendLayout();
             this.panel1.SuspendLayout();
             this.panelSeats1.SuspendLayout();
-            this.panel3.SuspendLayout();
+            this.panelThanhTien.SuspendLayout();
             this.SuspendLayout();
             // 
             // labelScreen
@@ -122,6 +124,7 @@
             this.button15.TabIndex = 4;
             this.button15.Text = "15";
             this.button15.UseVisualStyleBackColor = false;
+            this.button15.Click += new System.EventHandler(this.button15_Click);
             // 
             // button14
             // 
@@ -137,6 +140,7 @@
             this.button14.TabIndex = 3;
             this.button14.Text = "14";
             this.button14.UseVisualStyleBackColor = false;
+            this.button14.Click += new System.EventHandler(this.button14_Click);
             // 
             // button13
             // 
@@ -152,6 +156,7 @@
             this.button13.TabIndex = 2;
             this.button13.Text = "13";
             this.button13.UseVisualStyleBackColor = false;
+            this.button13.Click += new System.EventHandler(this.button13_Click);
             // 
             // button12
             // 
@@ -167,6 +172,7 @@
             this.button12.TabIndex = 1;
             this.button12.Text = "12";
             this.button12.UseVisualStyleBackColor = false;
+            this.button12.Click += new System.EventHandler(this.button12_Click);
             // 
             // button11
             // 
@@ -182,6 +188,7 @@
             this.button11.TabIndex = 0;
             this.button11.Text = "11";
             this.button11.UseVisualStyleBackColor = false;
+            this.button11.Click += new System.EventHandler(this.button11_Click);
             // 
             // panel1
             // 
@@ -213,6 +220,7 @@
             this.button10.TabIndex = 4;
             this.button10.Text = "10";
             this.button10.UseVisualStyleBackColor = false;
+            this.button10.Click += new System.EventHandler(this.button10_Click);
             // 
             // button9
             // 
@@ -228,6 +236,7 @@
             this.button9.TabIndex = 3;
             this.button9.Text = "9";
             this.button9.UseVisualStyleBackColor = false;
+            this.button9.Click += new System.EventHandler(this.button9_Click);
             // 
             // button8
             // 
@@ -243,6 +252,7 @@
             this.button8.TabIndex = 2;
             this.button8.Text = "8";
             this.button8.UseVisualStyleBackColor = false;
+            this.button8.Click += new System.EventHandler(this.button8_Click);
             // 
             // button7
             // 
@@ -258,6 +268,7 @@
             this.button7.TabIndex = 1;
             this.button7.Text = "7";
             this.button7.UseVisualStyleBackColor = false;
+            this.button7.Click += new System.EventHandler(this.button7_Click);
             // 
             // button6
             // 
@@ -273,6 +284,7 @@
             this.button6.TabIndex = 0;
             this.button6.Text = "6";
             this.button6.UseVisualStyleBackColor = false;
+            this.button6.Click += new System.EventHandler(this.button6_Click);
             // 
             // panelSeats1
             // 
@@ -289,7 +301,6 @@
             this.panelSeats1.Name = "panelSeats1";
             this.panelSeats1.Size = new System.Drawing.Size(600, 100);
             this.panelSeats1.TabIndex = 0;
-            this.panelSeats1.Paint += new System.Windows.Forms.PaintEventHandler(this.panelSeats1_Paint);
             // 
             // button5
             // 
@@ -321,6 +332,7 @@
             this.button4.TabIndex = 3;
             this.button4.Text = "4";
             this.button4.UseVisualStyleBackColor = false;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
             // button3
             // 
@@ -352,6 +364,7 @@
             this.button2.TabIndex = 1;
             this.button2.Text = "2";
             this.button2.UseVisualStyleBackColor = false;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // button1
             // 
@@ -367,6 +380,7 @@
             this.button1.TabIndex = 0;
             this.button1.Text = "1";
             this.button1.UseVisualStyleBackColor = false;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // labelThanhTien
             // 
@@ -377,22 +391,21 @@
             this.labelThanhTien.Size = new System.Drawing.Size(119, 28);
             this.labelThanhTien.TabIndex = 0;
             this.labelThanhTien.Text = "Thành tiền:";
-            this.labelThanhTien.Click += new System.EventHandler(this.labelThanhTien_Click);
             // 
-            // panel3
+            // panelThanhTien
             // 
-            this.panel3.Controls.Add(this.textBoxCost);
-            this.panel3.Controls.Add(this.labelThanhTien);
-            this.panel3.Location = new System.Drawing.Point(39, 411);
-            this.panel3.Margin = new System.Windows.Forms.Padding(30);
-            this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(600, 54);
-            this.panel3.TabIndex = 2;
+            this.panelThanhTien.Controls.Add(this.textBoxCost);
+            this.panelThanhTien.Controls.Add(this.labelThanhTien);
+            this.panelThanhTien.Location = new System.Drawing.Point(39, 411);
+            this.panelThanhTien.Margin = new System.Windows.Forms.Padding(30);
+            this.panelThanhTien.Name = "panelThanhTien";
+            this.panelThanhTien.Size = new System.Drawing.Size(600, 54);
+            this.panelThanhTien.TabIndex = 2;
             // 
             // textBoxCost
             // 
             this.textBoxCost.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxCost.BackColor = System.Drawing.Color.PaleTurquoise;
+            this.textBoxCost.BackColor = System.Drawing.Color.Gainsboro;
             this.textBoxCost.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.textBoxCost.Font = new System.Drawing.Font("Segoe UI", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textBoxCost.ForeColor = System.Drawing.Color.Black;
@@ -420,7 +433,7 @@
             // 
             // buttonCancel
             // 
-            this.buttonCancel.BackColor = System.Drawing.Color.Salmon;
+            this.buttonCancel.BackColor = System.Drawing.Color.LightSalmon;
             this.buttonCancel.FlatAppearance.BorderSize = 0;
             this.buttonCancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.buttonCancel.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -457,7 +470,7 @@
             this.Controls.Add(this.buttonEnd);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonChoose);
-            this.Controls.Add(this.panel3);
+            this.Controls.Add(this.panelThanhTien);
             this.Controls.Add(this.panelSeats);
             this.Controls.Add(this.labelScreen);
             this.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -470,8 +483,8 @@
             this.panel2.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panelSeats1.ResumeLayout(false);
-            this.panel3.ResumeLayout(false);
-            this.panel3.PerformLayout();
+            this.panelThanhTien.ResumeLayout(false);
+            this.panelThanhTien.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -499,7 +512,7 @@
         private System.Windows.Forms.Button button7;
         private System.Windows.Forms.Button button6;
         private System.Windows.Forms.Label labelThanhTien;
-        private System.Windows.Forms.Panel panel3;
+        private System.Windows.Forms.Panel panelThanhTien;
         private System.Windows.Forms.TextBox textBoxCost;
         private System.Windows.Forms.Button buttonChoose;
         private System.Windows.Forms.Button buttonCancel;
