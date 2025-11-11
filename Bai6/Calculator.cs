@@ -1,35 +1,28 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics.Eventing.Reader;
-using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Globalization; // Cần thêm để dùng CultureInfo
+using System.Globalization; 
 
 namespace Bai6
 {
     public partial class Calculator : Form
     {
-        private int maxNumOfChar = 10;
-
         #region Các biến tính toán
-        private double firstValue;
-        private bool isTypingFirstValue = true;
+        private double firstValue;// Giá trị đầu tiên
+        private bool isTypingFirstValue = true; //Đang nhập giá trị đầu tiên
         private enum MathType
         {
             Add, Minus, Times, Divide, Single, None
         };
-        private MathType mathType = MathType.None;
-        private double secondValue;
-        private bool isTypingSecondValue = false;
-        private bool isDefaultInput = true;
+        private MathType mathType = MathType.None;// Toán tử 2 ngôi đã nhận
+        private double secondValue;// Giá trị thứ 2
+        private bool isTypingSecondValue = false;// Đang nhập giá trị 2
+        private bool isDefaultInput = true;// Flag input mặc định, chi true khi vừa xóa hết, hoặc sau khi bấm toán tử
 
-        private double memoryValue = 0;
+        private double memoryValue = 0;// Biến bộ nhớ
         #endregion
+        private int maxNumOfChar = 10;// Số lượng ký tự tối đa trong khung input
 
         public Calculator()
         {
@@ -38,24 +31,6 @@ namespace Bai6
             UpdateMemoryLabel();
         }
 
-        //Hàm tính toán toán tử 2 ngôi
-        private bool CalculateBinaryToFirstValue()
-        {
-            switch (mathType)
-            {
-                case MathType.Add: firstValue = firstValue + secondValue; break;
-                case MathType.Minus: firstValue = firstValue - secondValue; break;
-                case MathType.Times: firstValue = firstValue * secondValue; break;
-                case MathType.Divide:
-                    if (secondValue == 0)
-                    {
-                        return false; // Báo lỗi
-                    }
-                    firstValue = firstValue / secondValue;
-                    break;
-            }
-            return true; // Tính toán thành công
-        }
         #region Phương thức xử lý nhập, xuất
         //Phương thức nhập số vào khung input
         private void Write(char c)
@@ -247,7 +222,6 @@ namespace Bai6
         {
             textBoxPre.Text = string.Empty;
         }
-
         #endregion
 
         #region Các phương thức lấy giá trị
@@ -304,7 +278,7 @@ namespace Bai6
         #endregion
 
         #region Phương thức hỗ trợ tính toán
-
+        // Đảo dấu
         private void ToggleSign()
         {
             string current = textBoxResult.Text;
@@ -331,14 +305,8 @@ namespace Bai6
             else
                 textBoxResult.Text = "-" + current;
         }
-
-
-
-        #endregion
-
-
         
-
+        // Đặt lại toàn bộ
         private void Reset()
         {
             firstValue = 0;
@@ -350,147 +318,10 @@ namespace Bai6
             MathDelete();
             // Lưu ý: Reset (nút C) không xóa bộ nhớ (memoryValue)
         }
+        #endregion
 
-        // --- SỬA LỖI 4: Implement 1/x (CẬP NHẬT LOGIC) ---
-        private void buttonFraction_Click(object sender, EventArgs e)
-        {
-            double currentValue = GetValue();
-            if (currentValue == 0)
-            {
-                HandleCalculationError("Cannot divide by zero");
-                return;
-            }
-
-            string mathExpression = GetMathExpressionForSingleOp(); // Lấy biểu thức
-            double result = 1 / currentValue;
-            MathWrite($"1/({mathExpression})"); // Sử dụng biểu thức
-            textBoxResult.Text = FormatResult(result);
-            isDefaultInput = true;
-
-            // Cập nhật giá trị nền để tiếp tục tính toán
-            if (isTypingFirstValue)
-            {
-                firstValue = result;
-                isTypingFirstValue = false; // Coi như đã nhập xong số đầu tiên
-            }
-            else if (isTypingSecondValue)
-            {
-                secondValue = result;
-                // Vẫn giữ isTypingSecondValue = true, chờ phép toán
-            }
-            else // Trường hợp vừa bấm =
-            {
-                firstValue = result;
-            }
-        }
-
-        private void textBoxResult_TextChanged(object sender, EventArgs e)
-        {
-            // ...
-        }
-
-        // ... (Các hàm button 0-9) ...
-        private void button0_Click(object sender, EventArgs e) { Write('0'); }
-        private void button1_Click(object sender, EventArgs e) { Write('1'); }
-        private void button2_Click(object sender, EventArgs e) { Write('2'); }
-        private void button3_Click(object sender, EventArgs e) { Write('3'); }
-        private void button4_Click(object sender, EventArgs e) { Write('4'); }
-        private void button5_Click(object sender, EventArgs e) { Write('5'); }
-        private void button6_Click(object sender, EventArgs e) { Write('6'); }
-        private void button7_Click(object sender, EventArgs e) { Write('7'); }
-        private void button8_Click(object sender, EventArgs e) { Write('8'); }
-        private void button9_Click(object sender, EventArgs e) { Write('9'); }
-        private void buttonDot_Click(object sender, EventArgs e) { Write(','); }
-
-
-        private void buttonCE_Click(object sender, EventArgs e)
-        {
-            InputDelete();
-        }
-
-        private void buttonC_Click(object sender, EventArgs e)
-        {
-            Reset();
-        }
-
-
-        private void buttonDel_Click(object sender, EventArgs e)
-        {
-            string current = textBoxResult.Text;
-
-            if (isDefaultInput || current.Contains("Error"))
-            {
-                return; // Không xóa số 0 mặc định hoặc lỗi
-            }
-
-            // Xóa ký tự cuối
-            current = current.Substring(0, current.Length - 1);
-
-            // Nếu rỗng hoặc chỉ còn dấu "-"
-            if (string.IsNullOrEmpty(current) || current == "-")
-            {
-                InputDelete(); // Đặt lại là "0"
-                return;
-            }
-
-            // Nếu ký tự cuối bị xóa là dấu "." phân cách
-            if (current.EndsWith("."))
-                current = current.Substring(0, current.Length - 1);
-
-            // Kiểm tra lại nếu xóa hết (ví dụ: "-." -> "-")
-            if (string.IsNullOrEmpty(current) || current == "-")
-            {
-                InputDelete(); // Đặt lại là "0"
-                return;
-            }
-
-            // Nếu xóa dấu ","
-            if (current.EndsWith(","))
-            {
-                textBoxResult.Text = current; // Tạm thời cho phép "123,"
-                return;
-            }
-
-
-            // Xử lý lại định dạng
-            string sign = current.StartsWith("-") ? "-" : "";
-            string currentNoSign = current.StartsWith("-") ? current.Substring(1) : current;
-
-            if (current.Contains(","))
-            {
-                // Nếu đang có phần thập phân, không format lại
-                textBoxResult.Text = current;
-            }
-            else
-            {
-                // Nếu chỉ còn phần nguyên, format lại
-                string integerPart = currentNoSign.Replace(".", "");
-                textBoxResult.Text = sign + FormatWithDots(integerPart);
-            }
-
-        }
-
-        private void buttonPm_Click(object sender, EventArgs e)
-        {
-            if (isTypingFirstValue || isTypingSecondValue)
-            {
-                // Case 1: Đang gõ số
-                // if (isDefaultInput && textBoxResult.Text == "0") return; // Không đổi dấu số 0 (đã xử lý trong ToggleSign)
-                ToggleSign(); // Chỉ đổi dấu số trên màn hình
-            }
-            else
-            {
-                // Case 2: Ngay sau khi nhấn = (hoặc 1/x, Sqrt, x²) (CẬP NHẬT LOGIC)
-                string mathExpression = GetMathExpressionForSingleOp(); // Lấy biểu thức
-
-                firstValue = -firstValue; // Đổi dấu giá trị kết quả
-                textBoxResult.Text = FormatResult(firstValue); // Cập nhật hiển thị
-                MathWrite($"negate({mathExpression})"); // Sử dụng biểu thức
-                isDefaultInput = true; // Sẵn sàng cho phép tính mới
-            }
-        }
-
-        // --- SỬA LỖI 2: Dùng FormatResult và kiểm tra lỗi ---
+        #region Các nút bấm khác
+        // Dấu =
         private void buttonEqual_Click(object sender, EventArgs e)
         {
             if (isTypingFirstValue)
@@ -555,136 +386,7 @@ namespace Bai6
             isDefaultInput = true;
         }
 
-        // --- SỬA LỖI 2, 3: Dùng FormatResult, cập nhật textBoxResult, kiểm tra lỗi ---
-        private void SetUpForBinaryOperator(MathType type)
-        {
-            // Xử lý lỗi nếu người dùng bấm 5 + Error
-            if (textBoxResult.Text.Contains("Error"))
-            {
-                Reset(); // Hoặc chỉ HandleCalculationError
-                return;
-            }
-
-            if (isTypingSecondValue)
-            {
-                // TH: Phép toán chuỗi "5 + 3 -"
-                secondValue = GetValue();
-                if (!CalculateBinaryToFirstValue())
-                {
-                    HandleCalculationError("Cannot divide by zero");
-                    return;
-                }
-                // *** SỬA LỖI 3: Cập nhật kết quả trung gian ***
-                textBoxResult.Text = FormatResult(firstValue);
-            }
-            else
-            {
-                // TH: Phép toán đầu tiên "5 +"
-                firstValue = GetValue();
-                isTypingFirstValue = false;
-            }
-
-            // Thiết lập cho phép toán MỚI
-            isTypingSecondValue = true; // Luôn sẵn sàng chờ số thứ 2
-            mathType = type;
-            char setOperator;
-            switch (type)
-            {
-                case MathType.Add: setOperator = '+'; break;
-                case MathType.Minus: setOperator = '-'; break;
-                case MathType.Times: setOperator = '×'; break;
-                case MathType.Divide: setOperator = '÷'; break;
-                default: setOperator = ' '; break;
-            }
-            // *** SỬA LỖI 2: Dùng FormatResult ***
-            MathWrite($"{FormatResult(firstValue)} {setOperator}");
-            isDefaultInput = true;
-        }
-
-        private void buttonPlus_Click(object sender, EventArgs e)
-        {
-            SetUpForBinaryOperator(MathType.Add);
-        }
-
-        private void buttonMinus_Click(object sender, EventArgs e)
-        {
-            SetUpForBinaryOperator(MathType.Minus);
-        }
-
-        private void buttonTime_Click(object sender, EventArgs e)
-        {
-            SetUpForBinaryOperator(MathType.Times);
-        }
-
-        private void buttonDivide_Click(object sender, EventArgs e)
-        {
-            SetUpForBinaryOperator(MathType.Divide);
-        }
-
-        // --- THÊM LOGIC MỚI (CẬP NHẬT LOGIC) ---
-        private void buttonSquare_Click(object sender, EventArgs e)
-        {
-            double currentValue = GetValue();
-            string mathExpression = GetMathExpressionForSingleOp(); // Lấy biểu thức
-            double result = currentValue * currentValue;
-
-            MathWrite($"sqr({mathExpression})"); // Sử dụng biểu thức
-            textBoxResult.Text = FormatResult(result);
-            isDefaultInput = true;
-
-            // Cập nhật giá trị nền để tiếp tục tính toán
-            if (isTypingFirstValue)
-            {
-                firstValue = result;
-                isTypingFirstValue = false; // Coi như đã nhập xong số đầu tiên
-            }
-            else if (isTypingSecondValue)
-            {
-                secondValue = result;
-                // Vẫn giữ isTypingSecondValue = true, chờ phép toán
-            }
-            else // Trường hợp vừa bấm =
-            {
-                firstValue = result;
-            }
-        }
-
-        // --- THÊM LOGIC MỚI (CẬP NHẬT LOGIC) ---
-        private void buttonSqrt_Click(object sender, EventArgs e)
-        {
-            double currentValue = GetValue();
-
-            // Kiểm tra lỗi căn bậc hai của số âm
-            if (currentValue < 0)
-            {
-                HandleCalculationError("Invalid input");
-                return;
-            }
-
-            string mathExpression = GetMathExpressionForSingleOp(); // Lấy biểu thức
-            double result = Math.Sqrt(currentValue);
-            MathWrite($"sqrt({mathExpression})"); // Sử dụng biểu thức
-            textBoxResult.Text = FormatResult(result);
-            isDefaultInput = true;
-
-            // Cập nhật giá trị nền để tiếp tục tính toán
-            if (isTypingFirstValue)
-            {
-                firstValue = result;
-                isTypingFirstValue = false; // Coi như đã nhập xong số đầu tiên
-            }
-            else if (isTypingSecondValue)
-            {
-                secondValue = result;
-                // Vẫn giữ isTypingSecondValue = true, chờ phép toán
-            }
-            else // Trường hợp vừa bấm =
-            {
-                firstValue = result;
-            }
-        }
-
-        // --- THÊM LOGIC MỚI: NÚT PHẦN TRĂM (%) ---
+        // Dấu %
         private void buttonPercent_Click(object sender, EventArgs e)
         {
             if (textBoxResult.Text.Contains("Error")) return;
@@ -749,12 +451,292 @@ namespace Bai6
             textBoxResult.Text = FormatResult(result);
             isDefaultInput = true;
         }
+        #endregion
+
+        #region Các nút bấm input
+        // Các nút số
+        private void button0_Click(object sender, EventArgs e) { Write('0'); }
+        private void button1_Click(object sender, EventArgs e) { Write('1'); }
+        private void button2_Click(object sender, EventArgs e) { Write('2'); }
+        private void button3_Click(object sender, EventArgs e) { Write('3'); }
+        private void button4_Click(object sender, EventArgs e) { Write('4'); }
+        private void button5_Click(object sender, EventArgs e) { Write('5'); }
+        private void button6_Click(object sender, EventArgs e) { Write('6'); }
+        private void button7_Click(object sender, EventArgs e) { Write('7'); }
+        private void button8_Click(object sender, EventArgs e) { Write('8'); }
+        private void button9_Click(object sender, EventArgs e) { Write('9'); }
+        private void buttonDot_Click(object sender, EventArgs e) { Write(','); }
+        
+        // Vừa là nút input, vừa là toán tử 1 ngôi
+        private void buttonPm_Click(object sender, EventArgs e)
+        {
+            if (isTypingFirstValue || isTypingSecondValue)
+            {
+                // Case 1: Đang gõ số
+                // if (isDefaultInput && textBoxResult.Text == "0") return; // Không đổi dấu số 0 (đã xử lý trong ToggleSign)
+                ToggleSign(); // Chỉ đổi dấu số trên màn hình
+            }
+            else
+            {
+                // Case 2: Ngay sau khi nhấn = (hoặc 1/x, Sqrt, x²) (CẬP NHẬT LOGIC)
+                string mathExpression = GetMathExpressionForSingleOp(); // Lấy biểu thức
+
+                firstValue = -firstValue; // Đổi dấu giá trị kết quả
+                textBoxResult.Text = FormatResult(firstValue); // Cập nhật hiển thị
+                MathWrite($"negate({mathExpression})"); // Sử dụng biểu thức
+                isDefaultInput = true; // Sẵn sàng cho phép tính mới
+            }
+        }
+
+        // Các nút thao tác input
+        // Chỉ xóa input
+        private void buttonCE_Click(object sender, EventArgs e)
+        {
+            InputDelete();
+        }
+        // Xóa tất cả trử Memory
+        private void buttonC_Click(object sender, EventArgs e)
+        {
+            Reset();
+        }
+        // Backspace
+        private void buttonDel_Click(object sender, EventArgs e)
+        {
+            string current = textBoxResult.Text;
+
+            if ((isDefaultInput && GetValue() == 0) || current.Contains("Error"))
+            {
+                return; // Không xóa số 0 mặc định hoặc lỗi
+            }
+
+            // Xóa ký tự cuối
+            current = current.Substring(0, current.Length - 1);
+
+            // Nếu rỗng hoặc chỉ còn dấu "-"
+            if (string.IsNullOrEmpty(current) || current == "-")
+            {
+                InputDelete(); // Đặt lại là "0"
+                return;
+            }
+
+            // Nếu ký tự cuối bị xóa là dấu "." phân cách
+            if (current.EndsWith("."))
+                current = current.Substring(0, current.Length - 1);
+
+            // Kiểm tra lại nếu xóa hết (ví dụ: "-." -> "-")
+            if (string.IsNullOrEmpty(current) || current == "-")
+            {
+                InputDelete(); // Đặt lại là "0"
+                return;
+            }
+
+            // Nếu xóa dấu ","
+            if (current.EndsWith(","))
+            {
+                textBoxResult.Text = current; // Tạm thời cho phép "123,"
+                return;
+            }
 
 
-        // --- THÊM CÁC HÀM BỘ NHỚ ---
+            // Xử lý lại định dạng
+            string sign = current.StartsWith("-") ? "-" : "";
+            string currentNoSign = current.StartsWith("-") ? current.Substring(1) : current;
 
-        // (Bạn có thể thêm 1 Label tên 'labelMemory' vào Form
-        // và gọi UpdateMemoryLabel() trong các hàm này để thấy chữ M)
+            if (current.Contains(","))
+            {
+                // Nếu đang có phần thập phân, không format lại
+                textBoxResult.Text = current;
+            }
+            else
+            {
+                // Nếu chỉ còn phần nguyên, format lại
+                string integerPart = currentNoSign.Replace(".", "");
+                textBoxResult.Text = sign + FormatWithDots(integerPart);
+            }
+
+        }
+        #endregion
+
+        #region Toán tử 2 ngôi
+        //Hàm tính toán toán tử 2 ngôi
+        private bool CalculateBinaryToFirstValue()
+        {
+            switch (mathType)
+            {
+                case MathType.Add: firstValue = firstValue + secondValue; break;
+                case MathType.Minus: firstValue = firstValue - secondValue; break;
+                case MathType.Times: firstValue = firstValue * secondValue; break;
+                case MathType.Divide:
+                    if (secondValue == 0)
+                    {
+                        return false; // Báo lỗi
+                    }
+                    firstValue = firstValue / secondValue;
+                    break;
+            }
+            return true; // Tính toán thành công
+        }
+
+
+        // Hỗ trợ thao tác chung khi bấm button tính toán
+        private void SetUpForBinaryOperator(MathType type)
+        {
+            if (textBoxResult.Text.Contains("Error"))
+            {
+                Reset(); // Hoặc chỉ HandleCalculationError
+                return;
+            }
+
+            if (isTypingSecondValue)
+            {
+                secondValue = GetValue();
+                if (!CalculateBinaryToFirstValue())
+                {
+                    HandleCalculationError("Cannot divide by zero");
+                    return;
+                }
+                textBoxResult.Text = FormatResult(firstValue);
+            }
+            else
+            {
+                firstValue = GetValue();
+                isTypingFirstValue = false;
+            }
+
+            // Thiết lập cho phép toán MỚI
+            isTypingSecondValue = true; 
+            mathType = type;
+            char setOperator;
+            switch (type)
+            {
+                case MathType.Add: setOperator = '+'; break;
+                case MathType.Minus: setOperator = '-'; break;
+                case MathType.Times: setOperator = '×'; break;
+                case MathType.Divide: setOperator = '÷'; break;
+                default: setOperator = ' '; break;
+            }
+            MathWrite($"{FormatResult(firstValue)} {setOperator}");
+            isDefaultInput = true;
+        }
+
+        private void buttonPlus_Click(object sender, EventArgs e)
+        {
+            SetUpForBinaryOperator(MathType.Add);
+        }
+
+        private void buttonMinus_Click(object sender, EventArgs e)
+        {
+            SetUpForBinaryOperator(MathType.Minus);
+        }
+
+        private void buttonTime_Click(object sender, EventArgs e)
+        {
+            SetUpForBinaryOperator(MathType.Times);
+        }
+
+        private void buttonDivide_Click(object sender, EventArgs e)
+        {
+            SetUpForBinaryOperator(MathType.Divide);
+        }
+        #endregion
+
+        #region Toán tử 1 ngôi
+        private void buttonSquare_Click(object sender, EventArgs e)
+        {
+            double currentValue = GetValue();
+            string mathExpression = GetMathExpressionForSingleOp(); // Lấy biểu thức
+            double result = currentValue * currentValue;
+
+            MathWrite($"sqr({mathExpression})"); // Sử dụng biểu thức
+            textBoxResult.Text = FormatResult(result);
+            isDefaultInput = true;
+
+            // Cập nhật giá trị nền để tiếp tục tính toán
+            if (isTypingFirstValue)
+            {
+                firstValue = result;
+                isTypingFirstValue = false; // Coi như đã nhập xong số đầu tiên
+            }
+            else if (isTypingSecondValue)
+            {
+                secondValue = result;
+                // Vẫn giữ isTypingSecondValue = true, chờ phép toán
+            }
+            else // Trường hợp vừa bấm =
+            {
+                firstValue = result;
+            }
+        }
+
+        private void buttonSqrt_Click(object sender, EventArgs e)
+        {
+            double currentValue = GetValue();
+
+            // Kiểm tra lỗi căn bậc hai của số âm
+            if (currentValue < 0)
+            {
+                HandleCalculationError("Invalid input");
+                return;
+            }
+
+            string mathExpression = GetMathExpressionForSingleOp(); // Lấy biểu thức
+            double result = Math.Sqrt(currentValue);
+            MathWrite($"sqrt({mathExpression})"); // Sử dụng biểu thức
+            textBoxResult.Text = FormatResult(result);
+            isDefaultInput = true;
+
+            // Cập nhật giá trị nền để tiếp tục tính toán
+            if (isTypingFirstValue)
+            {
+                firstValue = result;
+                isTypingFirstValue = false; // Coi như đã nhập xong số đầu tiên
+            }
+            else if (isTypingSecondValue)
+            {
+                secondValue = result;
+                // Vẫn giữ isTypingSecondValue = true, chờ phép toán
+            }
+            else // Trường hợp vừa bấm =
+            {
+                firstValue = result;
+            }
+        }
+
+        // Nghịch đảo
+        private void buttonFraction_Click(object sender, EventArgs e)
+        {
+            double currentValue = GetValue();
+            if (currentValue == 0)
+            {
+                HandleCalculationError("Cannot divide by zero");
+                return;
+            }
+
+            string mathExpression = GetMathExpressionForSingleOp(); // Lấy biểu thức
+            double result = 1 / currentValue;
+            MathWrite($"1/({mathExpression})"); // Sử dụng biểu thức
+            textBoxResult.Text = FormatResult(result);
+            isDefaultInput = true;
+
+            // Cập nhật giá trị nền để tiếp tục tính toán
+            if (isTypingFirstValue)
+            {
+                firstValue = result;
+                isTypingFirstValue = false; // Coi như đã nhập xong số đầu tiên
+            }
+            else if (isTypingSecondValue)
+            {
+                secondValue = result;
+                // Vẫn giữ isTypingSecondValue = true, chờ phép toán
+            }
+            else // Trường hợp vừa bấm =
+            {
+                firstValue = result;
+            }
+        }
+        #endregion
+
+        #region Thao tác bộ nhớ
         private void UpdateMemoryLabel()
         {
             if (labelMemory != null) // Giả định labelMemory tồn tại trong Designer
@@ -800,7 +782,9 @@ namespace Bai6
             isDefaultInput = true; // Kết thúc thao tác nhập
             UpdateMemoryLabel();
         }
+        #endregion
 
+        #region MenuStrip
         private void eToolStripMenuItem_Click(object sender, EventArgs e)
         {
             MessageBox.Show("Edit đi");
@@ -815,5 +799,6 @@ namespace Bai6
         {
             MessageBox.Show("Bạn cần giúp đỡ, OK");
         }
+        #endregion
     }
 }
