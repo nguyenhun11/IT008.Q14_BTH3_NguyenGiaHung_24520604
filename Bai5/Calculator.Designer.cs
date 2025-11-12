@@ -211,11 +211,11 @@
             this.Controls.Add(this.textBoxNum1);
             this.Controls.Add(this.labelNum1);
             this.Controls.Add(this.labelTitle);
+            this.Cursor = System.Windows.Forms.Cursors.Default;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.Name = "Calculator";
             this.Text = "Calculator";
-            this.UseWaitCursor = true;
             this.ResumeLayout(false);
             this.PerformLayout();
 

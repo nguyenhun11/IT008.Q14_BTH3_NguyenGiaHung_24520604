@@ -159,7 +159,6 @@
             this.buttonUnchoose.Size = new System.Drawing.Size(40, 40);
             this.buttonUnchoose.TabIndex = 13;
             this.buttonUnchoose.Text = "<";
-            this.buttonUnchoose.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             this.buttonUnchoose.UseVisualStyleBackColor = false;
             this.buttonUnchoose.Click += new System.EventHandler(this.buttonUnchoose_Click);
             // 
@@ -173,7 +172,6 @@
             this.buttonChoose.Size = new System.Drawing.Size(40, 40);
             this.buttonChoose.TabIndex = 12;
             this.buttonChoose.Text = ">";
-            this.buttonChoose.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             this.buttonChoose.UseVisualStyleBackColor = false;
             this.buttonChoose.Click += new System.EventHandler(this.buttonChoose_Click);
             // 
