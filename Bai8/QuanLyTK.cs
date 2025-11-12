@@ -254,10 +254,5 @@ namespace Bai8
         }
 
         #endregion
-
-        // 9. HÀM MỚI: NÚT THOÁT
-        // (Bạn cần liên kết sự kiện Click của nút "Thoát" với hàm này)
-
-
     }
 }
