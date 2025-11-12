@@ -301,16 +301,56 @@ namespace Bai9
 
         private void buttonDelete_Click(object sender, EventArgs e)
         {
-            // Duyệt qua tất cả các mục trong listBoxChoose
-            // Dùng ToList() để tạo 1 bản sao, tránh lỗi "collection was modified"
-            foreach (var item in listBoxChoose.Items.Cast<object>().ToList())
-            {
-                // Thêm mục này vào listBoxAble
-                listBoxAble.Items.Add(item);
+            // --- 1. LẤY MSSV TỪ TEXTBOX ---
+            string mssvToDelete = textBoxMSSV.Text;
 
-                // Xóa mục này khỏi listBoxChoose
-                listBoxChoose.Items.Remove(item);
+            if (string.IsNullOrWhiteSpace(mssvToDelete))
+            {
+                MessageBox.Show("Vui lòng chọn một sinh viên từ bảng để xóa, hoặc nhập MSSV của sinh viên cần xóa.", "Thiếu thông tin", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                textBoxMSSV.Focus();
+                return;
             }
+
+            // --- 2. TÌM SINH VIÊN TRONG DATAGRIDVIEW ---
+            DataGridViewRow rowToDelete = null;
+            foreach (DataGridViewRow row in dataGridView.Rows)
+            {
+                // row.Cells[0] là cột MSSV
+                if (row.Cells[0].Value != null && row.Cells[0].Value.ToString() == mssvToDelete)
+                {
+                    rowToDelete = row; // Đã tìm thấy
+                    break;
+                }
+            }
+
+            // --- 3. KIỂM TRA NẾU KHÔNG TÌM THẤY ---
+            if (rowToDelete == null)
+            {
+                MessageBox.Show($"Không tìm thấy sinh viên nào có MSSV là '{mssvToDelete}'.", "Không tìm thấy", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            // --- 4. HỎI XÁC NHẬN TRƯỚC KHI XÓA ---
+            string hoTen = rowToDelete.Cells[1].Value?.ToString() ?? "Không rõ"; // Lấy tên từ hàng sẽ xóa
+            DialogResult result = MessageBox.Show(
+                $"Bạn có chắc chắn muốn xóa vĩnh viễn sinh viên:\n\nMSSV: {mssvToDelete}\nHọ tên: {hoTen}",
+                "Xác nhận xóa",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning
+            );
+
+            // --- 5. TIẾN HÀNH XÓA NẾU NGƯỜI DÙNG ĐỒNG Ý ---
+            if (result == DialogResult.Yes)
+            {
+                // 6. Xóa dòng khỏi DataGridView
+                dataGridView.Rows.Remove(rowToDelete);
+
+                // 7. Xóa trống các ô input (gọi lại hàm ClearInputs)
+                ClearInputs();
+
+                MessageBox.Show("Đã xóa sinh viên thành công.", "Hoàn tất", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            // Nếu người dùng chọn "No", không làm gì cả
         }
 
 
