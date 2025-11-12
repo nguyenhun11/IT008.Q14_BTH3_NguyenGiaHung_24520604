@@ -22,7 +22,7 @@
 
 ## II. Nội dung báo cáo
 ### 1. Vòng đời của form
-#### Mô tả bài toán
+#### Mô tả chương trình
 - Yêu cầu:  Viết chương trình minh họa các sự kiện trong vòng đời của form
 - Hướng xử lý:
     - Một form tổng có thể tạo ra các form con và đánh số thứ tự các form tạo ra
@@ -47,7 +47,7 @@ Clip minh họa
 
 
 ### 2. Sự kiện Paint
-#### Mô tả bài toán
+#### Mô tả chương trình
 - Yêu cầu: 
     - Viết chương trình minh họa sự kiện Paint trên Form
     - Mỗi khi sự kiện Paint xảy ra sẽ vẽ lại chuỗi “Paint Event” tại một vị trí x, y ngẫu nhiên trên Form
@@ -70,6 +70,21 @@ Các trường hợp
 Video minh họa
 
 ### 3. Đổi màu nền bất kỳ
+#### Mô tả chương trình
+- Yêu cầu: 
+    - Viết chương trình minh họa sự kiện Click trên Button
+    - Khi nhấn vào nút Change Color sẽ tiến hành chuyển màu nền của Form sang một màu ngẫu nhiên
+- Hướng dẫn xử lý: Tại sự kiện Click của Button Change Color, thay đổi BackColor của Form thành màu RGB ngẫu nhiên nhờ Random
+
+#### Nội dung code
+- [Thư mục bài 3](./Bai03/)
+- [ChangeColor.cs](./Bai03/ChangeColor.cs)
+- [ChangeColor.Designer.cs](./Bai03/ChangeColor.Designer.cs)
+
+#### Kiểm thử chương trình
+Các trường hợp: click vào button Change Color
+
+Video minh họa
 
 ### 4. Chọn màu nền
 
