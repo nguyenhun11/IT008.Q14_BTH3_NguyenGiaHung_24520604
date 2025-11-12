@@ -1,13 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Bai9
 {
@@ -71,23 +65,19 @@ namespace Bai9
         private void buttonSave_Click(object sender, EventArgs e)
         {
             // --- 1. VALIDATION (Kiểm tra dữ liệu) ---
-
-            // Kiểm tra MSSV phải là số
+            // (Giữ nguyên phần validation của bạn, nó đã tốt rồi)
             if (string.IsNullOrWhiteSpace(textBoxMSSV.Text) || !long.TryParse(textBoxMSSV.Text, out _))
             {
                 MessageBox.Show("Mã số sinh viên không hợp lệ. Chỉ được nhập số.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                textBoxMSSV.Focus(); // Focus vào ô MSSV
-                return; // Dừng lại
+                textBoxMSSV.Focus();
+                return;
             }
-
-            // Kiểm tra các trường khác
             if (string.IsNullOrWhiteSpace(textBoxName.Text))
             {
                 MessageBox.Show("Vui lòng nhập họ tên.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 textBoxName.Focus();
                 return;
             }
-
             if (comboBoxMajor.SelectedItem == null)
             {
                 MessageBox.Show("Vui lòng chọn chuyên ngành.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -95,34 +85,75 @@ namespace Bai9
                 return;
             }
 
-            // --- 2. LẤY DỮ LIỆU ---
-            SinhVien sv = new SinhVien();
-            sv.MSSV = textBoxMSSV.Text;
-            sv.HoTen = textBoxName.Text;
-            sv.ChuyenNganh = comboBoxMajor.SelectedItem.ToString();
-            sv.GioiTinh = radioButtonMale.Checked ? "Nam" : "Nữ"; // Lấy từ RadioButton
+            // --- 2. TÌM SINH VIÊN HIỆN TẠI (LOGIC MỚI) ---
+            string mssvToSave = textBoxMSSV.Text;
+            DataGridViewRow existingRow = null;
 
-            // Lấy các môn đã đăng ký từ listBoxChoose
-            foreach (var item in listBoxChoose.Items)
+            // Duyệt qua tất cả các dòng trong DataGridView
+            foreach (DataGridViewRow row in dataGridView.Rows)
             {
-                sv.CacMonHoc.Add(item.ToString());
+                // row.Cells[0] là cột MSSV
+                if (row.Cells[0].Value != null && row.Cells[0].Value.ToString() == mssvToSave)
+                {
+                    existingRow = row; // Đã tìm thấy
+                    break;
+                }
             }
 
-            // --- 3. THÊM VÀO DATAGRIDVIEW ---
-            int rowIndex = dataGridView.Rows.Add(
-                sv.MSSV,
-                sv.HoTen,
-                sv.ChuyenNganh,
-                sv.GioiTinh,
-                sv.CacMonHoc.Count // Chỉ hiển thị SỐ MÔN như bạn yêu cầu
-            );
+            // --- 3. LẤY DỮ LIỆU TỪ INPUT ---
+            // Lấy thông tin từ các control
+            string hoTen = textBoxName.Text;
+            string chuyenNganh = comboBoxMajor.SelectedItem.ToString();
+            string gioiTinh = radioButtonMale.Checked ? "Nam" : "Nữ";
+            List<string> cacMonHoc = new List<string>();
+            foreach (var item in listBoxChoose.Items)
+            {
+                cacMonHoc.Add(item.ToString());
+            }
 
-            // !! Rất quan trọng cho Yêu cầu 3 !!
-            // Lưu trữ TOÀN BỘ đối tượng 'sv' vào trong 'Tag' của dòng
-            // để sau này có thể lấy lại đầy đủ thông tin.
-            dataGridView.Rows[rowIndex].Tag = sv;
+            // --- 4. THÊM MỚI HOẶC CẬP NHẬT ---
+            if (existingRow != null)
+            {
+                // 4A: CẬP NHẬT (UPDATE)
+                SinhVien sv = (SinhVien)existingRow.Tag; // Lấy đối tượng SinhVien đã lưu
 
-            // --- 4. XÓA TRẮNG INPUT ---
+                // Cập nhật đối tượng
+                sv.HoTen = hoTen;
+                sv.ChuyenNganh = chuyenNganh;
+                sv.GioiTinh = gioiTinh;
+                sv.CacMonHoc = cacMonHoc; // Ghi đè danh sách môn học cũ
+
+                // Cập nhật các ô trong DataGridView
+                existingRow.Cells[1].Value = sv.HoTen;
+                existingRow.Cells[2].Value = sv.ChuyenNganh;
+                existingRow.Cells[3].Value = sv.GioiTinh;
+                existingRow.Cells[4].Value = sv.CacMonHoc.Count;
+
+                MessageBox.Show("Đã cập nhật thông tin sinh viên " + mssvToSave, "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
+                // 4B: THÊM MỚI (ADD NEW)
+                SinhVien sv = new SinhVien();
+                sv.MSSV = mssvToSave;
+                sv.HoTen = hoTen;
+                sv.ChuyenNganh = chuyenNganh;
+                sv.GioiTinh = gioiTinh;
+                sv.CacMonHoc = cacMonHoc;
+
+                int rowIndex = dataGridView.Rows.Add(
+                    sv.MSSV,
+                    sv.HoTen,
+                    sv.ChuyenNganh,
+                    sv.GioiTinh,
+                    sv.CacMonHoc.Count
+                );
+
+                // Lưu đối tượng vào Tag của dòng (rất quan trọng)
+                dataGridView.Rows[rowIndex].Tag = sv;
+            }
+
+            // --- 5. XÓA TRẮNG INPUT ---
             ClearInputs();
         }
 
@@ -183,13 +214,32 @@ namespace Bai9
 
             string selectedMajor = comboBoxMajor.SelectedItem.ToString();
 
-            // Giả sử Dictionary của bạn tên là Major_Subject
+            // Giả sử Dictionary của bạn tên là subjectsByMajor
             if (subjectsByMajor.ContainsKey(selectedMajor))
             {
-                // Lấy tất cả môn học của chuyên ngành
-                List<string> allSubjects = subjectsByMajor[selectedMajor];
+                // Lấy tất cả môn học của chuyên ngành MỚI
+                List<string> allSubjectsForNewMajor = subjectsByMajor[selectedMajor];
+                // Dùng HashSet để tra cứu nhanh (Yêu cầu 2)
+                var subjectSetForNewMajor = new HashSet<string>(allSubjectsForNewMajor);
 
-                // Lọc: Tạo một set (tập hợp) các môn ĐÃ CHỌN để tra cứu nhanh hơn
+                // --- YÊU CẦU 2: Lọc các môn trong listBoxChoose ---
+                // Phải duyệt ngược khi xóa các mục khỏi ListBox
+                for (int i = listBoxChoose.Items.Count - 1; i >= 0; i--)
+                {
+                    string subject = listBoxChoose.Items[i].ToString();
+
+                    // NẾU môn đã chọn KHÔNG có trong danh sách môn của chuyên ngành MỚI
+                    if (!subjectSetForNewMajor.Contains(subject))
+                    {
+                        // Xóa nó khỏi danh sách đã chọn
+                        listBoxChoose.Items.RemoveAt(i);
+                    }
+                }
+
+                // --- YÊU CẦU 3: Cập nhật lại listBoxAble ---
+                // (Code này gần giống code cũ của bạn, nhưng giờ nó chạy SAU KHI đã lọc)
+
+                // Tạo set các môn ĐÃ CHỌN (sau khi đã lọc)
                 var chosenSubjects = new HashSet<string>();
                 foreach (var item in listBoxChoose.Items)
                 {
@@ -198,7 +248,7 @@ namespace Bai9
 
                 // Cập nhật listBoxAble
                 listBoxAble.Items.Clear();
-                foreach (string subject in allSubjects)
+                foreach (string subject in allSubjectsForNewMajor)
                 {
                     // Chỉ thêm môn học vào listBoxAble NẾU nó CHƯA CÓ trong listBoxChoose
                     if (!chosenSubjects.Contains(subject))
@@ -207,8 +257,13 @@ namespace Bai9
                     }
                 }
             }
+            else
+            {
+                // Nếu chuyên ngành không có trong dictionary (ví dụ bạn chưa thêm môn)
+                listBoxAble.Items.Clear();
+                listBoxChoose.Items.Clear(); // Xóa luôn các môn đã chọn
+            }
         }
-
         private void dataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             // e.RowIndex < 0 nghĩa là người dùng nhấn vào header, không phải dòng dữ liệu
@@ -244,47 +299,17 @@ namespace Bai9
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-
         private void buttonDelete_Click(object sender, EventArgs e)
         {
-
-        }
-
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            // 1. Lấy tên chuyên ngành đã chọn
-            // Dùng SelectedItem.ToString() sẽ an toàn hơn .Text
-            if (comboBoxMajor.SelectedItem == null)
+            // Duyệt qua tất cả các mục trong listBoxChoose
+            // Dùng ToList() để tạo 1 bản sao, tránh lỗi "collection was modified"
+            foreach (var item in listBoxChoose.Items.Cast<object>().ToList())
             {
-                return; // Nếu không có gì được chọn, thì thoát
-            }
-            string selectedMajor = comboBoxMajor.SelectedItem.ToString();
+                // Thêm mục này vào listBoxAble
+                listBoxAble.Items.Add(item);
 
-            // 2. Kiểm tra xem chuyên ngành có trong Dictionary không
-            // (Giả sử Dictionary của bạn tên là Major_Subject như bạn đã đặt)
-            if (subjectsByMajor.ContainsKey(selectedMajor))
-            {
-                // 3. Lấy danh sách môn học
-                List<string> subjects = subjectsByMajor[selectedMajor];
-
-                // 4. CẬP NHẬT LISTBOX (Phần quan trọng)
-
-                // Bước 1: Xóa tất cả các mục cũ
-                listBoxAble.Items.Clear();
-
-                // Bước 2: Thêm tất cả các mục mới từ danh sách
-                // (Phải dùng .ToArray() vì AddRange yêu cầu một mảng)
-                listBoxAble.Items.AddRange(subjects.ToArray());
-            }
-            else
-            {
-                // Nếu chuyên ngành không có trong Dictionary, cũng nên xóa list
-                listBoxAble.Items.Clear();
+                // Xóa mục này khỏi listBoxChoose
+                listBoxChoose.Items.Remove(item);
             }
         }
 

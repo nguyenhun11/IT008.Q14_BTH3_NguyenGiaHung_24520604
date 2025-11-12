@@ -214,7 +214,7 @@
             this.comboBoxMajor.Name = "comboBoxMajor";
             this.comboBoxMajor.Size = new System.Drawing.Size(441, 36);
             this.comboBoxMajor.TabIndex = 7;
-            this.comboBoxMajor.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            this.comboBoxMajor.SelectedIndexChanged += new System.EventHandler(this.comboBoxMajor_SelectedIndexChanged);
             // 
             // textBoxName
             // 
