@@ -12,9 +12,11 @@ namespace Bai9
         public QLSV()
         {
             InitializeComponent();
+            ClearInputs();
         }
 
-        // Đặt class này bên ngoài class QLSV, nhưng bên trong namespace
+        #region Thông tin sinh viên và môn học
+        // Thông tin sinh viên
         public class SinhVien
         {
             public string MSSV { get; set; }
@@ -30,45 +32,111 @@ namespace Bai9
             }
         }
 
+        // Các môn học theo chuyên ngành
         Dictionary<string, List<string>> subjectsByMajor = new Dictionary<string, List<string>>
         {
             {
                 "Công nghệ phần mềm", new List<string>
                 {
                     "Nhập môn công nghệ phần mềm",
+                    "Lập trình hướng đối tượng",
+                    "Cấu trúc dữ liệu và giải thuật",
+                    "Cơ sở dữ liệu",
+                    "Phân tích và thiết kế phần mềm",
                     "Kiểm thử phần mềm",
-                    "Quản lý dự án phần mềm"
-                    // ... thêm các môn khác
+                    "Quản lý dự án phần mềm",
+                    "Kiến trúc phần mềm",
+                    "Phát triển ứng dụng Web",
+                    "Phát triển ứng dụng di động",
+                    "Mẫu thiết kế (Design Patterns)"
                 }
             },
             {
                 "Khoa học máy tính", new List<string>
                 {
+                    "Toán rời rạc",
                     "Cấu trúc dữ liệu và giải thuật",
+                    "Hệ điều hành",
                     "Trí tuệ nhân tạo",
-                    "Hệ điều hành"
-                    // ... thêm các môn khác
+                    "Học máy",
+                    "Lý thuyết trình biên dịch",
+                    "Xử lý ngôn ngữ tự nhiên",
+                    "Thị giác máy tính",
+                    "Phân tích thuật toán",
+                    "Lý thuyết đồ thị"
                 }
             },
             {
                 "Kỹ thuật máy tính", new List<string>
                 {
+                    "Mạch logic",
                     "Kiến trúc máy tính",
-                    "Vi xử lý",
-                    "Thiết kế hệ thống nhúng"
-                    // ... thêm các môn khác
+                    "Vi xử lý và vi điều khiển",
+                    "Thiết kế hệ thống nhúng",
+                    "Điện tử cơ bản",
+                    "Tín hiệu và hệ thống",
+                    "Hệ thống thời gian thực",
+                    "Mạng máy tính",
+                    "Lập trình hệ thống",
+                    "Thiết kế VLSI"
+                }
+            },
+            {
+                "Hệ thống thông tin", new List<string>
+                {
+                    "Nhập môn Hệ thống thông tin",
+                    "Phân tích thiết kế hệ thống thông tin",
+                    "Quản trị cơ sở dữ liệu",
+                    "Hệ thống thông tin quản lý (MIS)",
+                    "Thương mại điện tử",
+                    "Khai phá dữ liệu",
+                    "Hệ hỗ trợ quyết định (DSS)",
+                    "Bảo mật hệ thống thông tin",
+                    "Quản lý dự án CNTT",
+                    "Tích hợp hệ thống"
+                }
+            },
+            {
+                "Mạng máy tính và truyền thông", new List<string>
+                {
+                    "Nhập môn Mạng máy tính",
+                    "Truyền dữ liệu",
+                    "Mạng không dây và di động",
+                    "Quản trị mạng",
+                    "An ninh mạng",
+                    "Lập trình mạng",
+                    "Các giao thức mạng",
+                    "Hệ thống mạng viễn thông",
+                    "Đánh giá hiệu năng mạng",
+                    "Dịch vụ mạng (DNS, DHCP, Web)"
+                }
+            },
+            {
+                "Khoa học và kỹ thuật thông tin", new List<string>
+                {
+                    "Nhập môn Khoa học dữ liệu",
+                    "Xử lý dữ liệu lớn (Big Data)",
+                    "Học máy",
+                    "Khai phá dữ liệu",
+                    "Phân tích dữ liệu",
+                    "Trực quan hóa dữ liệu",
+                    "Tìm kiếm thông tin",
+                    "Hệ cơ sở dữ liệu nâng cao",
+                    "Thống kê ứng dụng",
+                    "Xử lý ngôn ngữ tự nhiên"
                 }
             }
-            // ... Thêm các chuyên ngành còn lại
         };
+        #endregion
 
+        #region Nhập sinh viên
+        //Lưu sinh viên
         private void buttonSave_Click(object sender, EventArgs e)
         {
-            // --- 1. VALIDATION (Kiểm tra dữ liệu) ---
-            // (Giữ nguyên phần validation của bạn, nó đã tốt rồi)
+            // 1. Kiểm tra dữ liệu nhập
             if (string.IsNullOrWhiteSpace(textBoxMSSV.Text) || !long.TryParse(textBoxMSSV.Text, out _))
             {
-                MessageBox.Show("Mã số sinh viên không hợp lệ. Chỉ được nhập số.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Mã số sinh viên không hợp lệ!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 textBoxMSSV.Focus();
                 return;
             }
@@ -85,7 +153,7 @@ namespace Bai9
                 return;
             }
 
-            // --- 2. TÌM SINH VIÊN HIỆN TẠI (LOGIC MỚI) ---
+            // 2. Kiểm tra đã tồn tại sinh viên chưa
             string mssvToSave = textBoxMSSV.Text;
             DataGridViewRow existingRow = null;
 
@@ -100,7 +168,7 @@ namespace Bai9
                 }
             }
 
-            // --- 3. LẤY DỮ LIỆU TỪ INPUT ---
+            // 3. Lấy dữ liệu từ input
             // Lấy thông tin từ các control
             string hoTen = textBoxName.Text;
             string chuyenNganh = comboBoxMajor.SelectedItem.ToString();
@@ -111,10 +179,10 @@ namespace Bai9
                 cacMonHoc.Add(item.ToString());
             }
 
-            // --- 4. THÊM MỚI HOẶC CẬP NHẬT ---
+            // 4. Thêm hoặc cập nhật
             if (existingRow != null)
             {
-                // 4A: CẬP NHẬT (UPDATE)
+                // 4.1. Cập nhật
                 SinhVien sv = (SinhVien)existingRow.Tag; // Lấy đối tượng SinhVien đã lưu
 
                 // Cập nhật đối tượng
@@ -133,7 +201,7 @@ namespace Bai9
             }
             else
             {
-                // 4B: THÊM MỚI (ADD NEW)
+                // 4.2. Thêm mới
                 SinhVien sv = new SinhVien();
                 sv.MSSV = mssvToSave;
                 sv.HoTen = hoTen;
@@ -153,11 +221,11 @@ namespace Bai9
                 dataGridView.Rows[rowIndex].Tag = sv;
             }
 
-            // --- 5. XÓA TRẮNG INPUT ---
+            // 5. Xóa phần đã nhập trong input
             ClearInputs();
         }
 
-        // Tạo một hàm riêng để xóa input, dùng cho cả nút Save và nút Delete
+        // Xóa input
         private void ClearInputs()
         {
             textBoxMSSV.Text = "";
@@ -171,7 +239,20 @@ namespace Bai9
 
             textBoxMSSV.Focus(); // Đưa con trỏ về ô đầu tiên
         }
+        #endregion
 
+        #region Chọn môn
+        private void buttonChoose_Click(object sender, EventArgs e)
+        {
+            // Di chuyển từ Able -> Choose
+            MoveSelectedItem(listBoxAble, listBoxChoose);
+        }
+
+        private void buttonUnchoose_Click(object sender, EventArgs e)
+        {
+            // Di chuyển từ Choose -> Able
+            MoveSelectedItem(listBoxChoose, listBoxAble);
+        }
 
         // Hàm chung để di chuyển mục được chọn từ ListBox này sang ListBox kia
         private void MoveSelectedItem(ListBox fromList, ListBox toList)
@@ -191,19 +272,7 @@ namespace Bai9
             fromList.Items.Remove(selectedItem);
         }
 
-        private void buttonChoose_Click(object sender, EventArgs e)
-        {
-            // Di chuyển từ Able -> Choose
-            MoveSelectedItem(listBoxAble, listBoxChoose);
-        }
-
-        private void buttonUnchoose_Click(object sender, EventArgs e)
-        {
-            // Di chuyển từ Choose -> Able
-            MoveSelectedItem(listBoxChoose, listBoxAble);
-        }
-
-
+        // Chọn chuyên ngành và hiển thị môn
         private void comboBoxMajor_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (comboBoxMajor.SelectedItem == null)
@@ -214,15 +283,13 @@ namespace Bai9
 
             string selectedMajor = comboBoxMajor.SelectedItem.ToString();
 
-            // Giả sử Dictionary của bạn tên là subjectsByMajor
             if (subjectsByMajor.ContainsKey(selectedMajor))
             {
-                // Lấy tất cả môn học của chuyên ngành MỚI
+                // Lấy tất cả môn học của chuyên ngành
                 List<string> allSubjectsForNewMajor = subjectsByMajor[selectedMajor];
-                // Dùng HashSet để tra cứu nhanh (Yêu cầu 2)
+                // Nếu đổi chuyên ngành, xóa các môn trong ngành cũ, trừ những môn trong ngành cũ và ngành mới
                 var subjectSetForNewMajor = new HashSet<string>(allSubjectsForNewMajor);
 
-                // --- YÊU CẦU 2: Lọc các môn trong listBoxChoose ---
                 // Phải duyệt ngược khi xóa các mục khỏi ListBox
                 for (int i = listBoxChoose.Items.Count - 1; i >= 0; i--)
                 {
@@ -236,10 +303,7 @@ namespace Bai9
                     }
                 }
 
-                // --- YÊU CẦU 3: Cập nhật lại listBoxAble ---
-                // (Code này gần giống code cũ của bạn, nhưng giờ nó chạy SAU KHI đã lọc)
-
-                // Tạo set các môn ĐÃ CHỌN (sau khi đã lọc)
+                // Tạo set các môn đã chọn (sau khi đã lọc)
                 var chosenSubjects = new HashSet<string>();
                 foreach (var item in listBoxChoose.Items)
                 {
@@ -264,44 +328,41 @@ namespace Bai9
                 listBoxChoose.Items.Clear(); // Xóa luôn các môn đã chọn
             }
         }
+        #endregion
+
+        #region Cập nhật sinh viên
+
         private void dataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            // e.RowIndex < 0 nghĩa là người dùng nhấn vào header, không phải dòng dữ liệu
+            // e.RowIndex < 0 nghĩa là người dùng nhấn vào header
             if (e.RowIndex < 0)
             {
                 return;
             }
 
-            // Lấy dòng hiện tại đã được nhấn
             DataGridViewRow row = dataGridView.Rows[e.RowIndex];
 
             // Kiểm tra xem 'Tag' có chứa đối tượng SinhVien không
             if (row.Tag is SinhVien sv)
             {
-                // Nếu có, bắt đầu "đổ" dữ liệu ngược lại các control
-
-                // 1. Đổ dữ liệu cơ bản
+                // 1. Đổ dữ liệu cơ bản đã lưu
                 textBoxMSSV.Text = sv.MSSV;
                 textBoxName.Text = sv.HoTen;
                 radioButtonMale.Checked = (sv.GioiTinh == "Nam");
                 radioButtonFemale.Checked = (sv.GioiTinh == "Nữ");
 
-                // 2. Đổ dữ liệu cho listBoxChoose (PHẢI LÀM TRƯỚC ComboBox)
-                // Vì khi chọn ComboBox, sự kiện SelectedIndexChanged sẽ chạy
-                // và nó cần biết listBoxChoose đang có gì
+                // 2. Đổ dữ liệu môn học đã lưu vào listBoxChoose
                 listBoxChoose.Items.Clear();
                 listBoxChoose.Items.AddRange(sv.CacMonHoc.ToArray());
 
-                // 3. Đổ dữ liệu cho ComboBox
-                // Dòng này sẽ tự động kích hoạt sự kiện 'comboBoxMajor_SelectedIndexChanged',
-                // sự kiện này sẽ tự động điền 'listBoxAble' một cách chính xác (theo logic ở Yêu cầu 2)
+                // 3. Đặt lại ComboBox về chuyên ngành đã lưu
                 comboBoxMajor.SelectedItem = sv.ChuyenNganh;
+                comboBoxMajor_SelectedIndexChanged(comboBoxMajor, EventArgs.Empty);
             }
         }
-
         private void buttonDelete_Click(object sender, EventArgs e)
         {
-            // --- 1. LẤY MSSV TỪ TEXTBOX ---
+            // 1. LẤY MSSV TỪ TEXTBOX
             string mssvToDelete = textBoxMSSV.Text;
 
             if (string.IsNullOrWhiteSpace(mssvToDelete))
@@ -311,7 +372,7 @@ namespace Bai9
                 return;
             }
 
-            // --- 2. TÌM SINH VIÊN TRONG DATAGRIDVIEW ---
+            //  2. TÌM SINH VIÊN TRONG DATAGRIDVIEW 
             DataGridViewRow rowToDelete = null;
             foreach (DataGridViewRow row in dataGridView.Rows)
             {
@@ -323,14 +384,14 @@ namespace Bai9
                 }
             }
 
-            // --- 3. KIỂM TRA NẾU KHÔNG TÌM THẤY ---
+            //  3. KIỂM TRA NẾU KHÔNG TÌM THẤY 
             if (rowToDelete == null)
             {
                 MessageBox.Show($"Không tìm thấy sinh viên nào có MSSV là '{mssvToDelete}'.", "Không tìm thấy", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
-            // --- 4. HỎI XÁC NHẬN TRƯỚC KHI XÓA ---
+            //  4. HỎI XÁC NHẬN TRƯỚC KHI XÓA 
             string hoTen = rowToDelete.Cells[1].Value?.ToString() ?? "Không rõ"; // Lấy tên từ hàng sẽ xóa
             DialogResult result = MessageBox.Show(
                 $"Bạn có chắc chắn muốn xóa vĩnh viễn sinh viên:\n\nMSSV: {mssvToDelete}\nHọ tên: {hoTen}",
@@ -339,7 +400,7 @@ namespace Bai9
                 MessageBoxIcon.Warning
             );
 
-            // --- 5. TIẾN HÀNH XÓA NẾU NGƯỜI DÙNG ĐỒNG Ý ---
+            //  5. TIẾN HÀNH XÓA NẾU NGƯỜI DÙNG ĐỒNG Ý 
             if (result == DialogResult.Yes)
             {
                 // 6. Xóa dòng khỏi DataGridView
@@ -352,8 +413,7 @@ namespace Bai9
             }
             // Nếu người dùng chọn "No", không làm gì cả
         }
-
-
+        #endregion
 
     }
 }
