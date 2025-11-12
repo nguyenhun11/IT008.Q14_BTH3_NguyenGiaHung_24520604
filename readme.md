@@ -21,7 +21,7 @@
 <!-- ![hướng dẫn](image/huongDan.png) -->
 
 ## II. Nội dung báo cáo
-### 1. Vòng đời của form
+### 1️⃣ Vòng đời của form
 #### Mô tả chương trình
 - Yêu cầu:  Viết chương trình minh họa các sự kiện trong vòng đời của form
 - Hướng xử lý:
@@ -46,7 +46,7 @@ Clip minh họa
 ![](video/Bai1.mp4)
 
 
-### 2. Sự kiện Paint
+### 2️⃣ Sự kiện Paint
 #### Mô tả chương trình
 - Yêu cầu: 
     - Viết chương trình minh họa sự kiện Paint trên Form
@@ -69,12 +69,12 @@ Các trường hợp
 
 Video minh họa
 
-### 3. Đổi màu nền bất kỳ
+### 3️⃣ Đổi màu nền bất kỳ
 #### Mô tả chương trình
 - Yêu cầu: 
     - Viết chương trình minh họa sự kiện Click trên Button
     - Khi nhấn vào nút Change Color sẽ tiến hành chuyển màu nền của Form sang một màu ngẫu nhiên
-- Hướng dẫn xử lý: Tại sự kiện Click của Button Change Color, thay đổi BackColor của Form thành màu RGB ngẫu nhiên nhờ Random
+- Hướng xử lý: Tại sự kiện Click của Button Change Color, thay đổi BackColor của Form thành màu RGB ngẫu nhiên nhờ Random
 
 #### Nội dung code
 - [Thư mục bài 3](./Bai03/)
@@ -86,7 +86,16 @@ Các trường hợp: click vào button Change Color
 
 Video minh họa
 
-### 4. Chọn màu nền
+### 4️⃣ Chọn màu nền
+#### Mô tả chương trình
+- Yêu cầu:
+    - Viết chương trình minh họa sử dụng Menu và hộp thoại ColorDialog
+    - Khi chọn chức năng Color trong menu Format sẽ mở ra hộp thoại ColorDialog
+    - Sau  khi  chọn  màu  trong  hộp  thoại  ColorDialog  sẽ  tiến hành đổi  màu  nền  của  Form theo màu đã chọn
+- Hướng xử lý:
+    - Tạo menutrip có Format và Color trong đó
+    - Khi click vào Color sẽ mở ColorDialog và chọn màu mong muốn
+    - Nếu DialogResult là OK thì đặt BackColor là màu đã chọn
 
 ### 5. Máy tính đơn giản
 
