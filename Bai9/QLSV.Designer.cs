@@ -28,9 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.title = new System.Windows.Forms.Label();
             this.groupBoxInfor = new System.Windows.Forms.GroupBox();
+            this.radioButtonFemale = new System.Windows.Forms.RadioButton();
+            this.radioButtonMale = new System.Windows.Forms.RadioButton();
             this.buttonDelete = new System.Windows.Forms.Button();
             this.buttonSave = new System.Windows.Forms.Button();
             this.buttonUnchoose = new System.Windows.Forms.Button();
@@ -51,8 +53,6 @@
             this.Major = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Gender = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Count = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.radioButtonMale = new System.Windows.Forms.RadioButton();
-            this.radioButtonFemale = new System.Windows.Forms.RadioButton();
             this.groupBoxInfor.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
             this.SuspendLayout();
@@ -101,6 +101,28 @@
             this.groupBoxInfor.TabStop = false;
             this.groupBoxInfor.Text = "Thông tin sinh viên";
             // 
+            // radioButtonFemale
+            // 
+            this.radioButtonFemale.AutoSize = true;
+            this.radioButtonFemale.Location = new System.Drawing.Point(346, 140);
+            this.radioButtonFemale.Name = "radioButtonFemale";
+            this.radioButtonFemale.Size = new System.Drawing.Size(60, 32);
+            this.radioButtonFemale.TabIndex = 17;
+            this.radioButtonFemale.TabStop = true;
+            this.radioButtonFemale.Text = "Nữ";
+            this.radioButtonFemale.UseVisualStyleBackColor = true;
+            // 
+            // radioButtonMale
+            // 
+            this.radioButtonMale.AutoSize = true;
+            this.radioButtonMale.Location = new System.Drawing.Point(256, 139);
+            this.radioButtonMale.Name = "radioButtonMale";
+            this.radioButtonMale.Size = new System.Drawing.Size(75, 32);
+            this.radioButtonMale.TabIndex = 16;
+            this.radioButtonMale.TabStop = true;
+            this.radioButtonMale.Text = "Nam\r\n";
+            this.radioButtonMale.UseVisualStyleBackColor = true;
+            // 
             // buttonDelete
             // 
             this.buttonDelete.BackColor = System.Drawing.SystemColors.Window;
@@ -139,7 +161,7 @@
             this.buttonUnchoose.Text = "<";
             this.buttonUnchoose.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             this.buttonUnchoose.UseVisualStyleBackColor = false;
-            this.buttonUnchoose.Click += new System.EventHandler(this.button1_Click);
+            this.buttonUnchoose.Click += new System.EventHandler(this.buttonUnchoose_Click);
             // 
             // buttonChoose
             // 
@@ -160,19 +182,6 @@
             this.listBoxChoose.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.listBoxChoose.FormattingEnabled = true;
             this.listBoxChoose.ItemHeight = 28;
-            this.listBoxChoose.Items.AddRange(new object[] {
-            "nhập môn lập trình",
-            "Cớ sở dữ liệu",
-            "1",
-            "2",
-            "3",
-            "4",
-            "5",
-            "6",
-            "7",
-            "8",
-            "9",
-            "0"});
             this.listBoxChoose.Location = new System.Drawing.Point(474, 213);
             this.listBoxChoose.Name = "listBoxChoose";
             this.listBoxChoose.Size = new System.Drawing.Size(223, 114);
@@ -184,19 +193,6 @@
             this.listBoxAble.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.listBoxAble.FormattingEnabled = true;
             this.listBoxAble.ItemHeight = 28;
-            this.listBoxAble.Items.AddRange(new object[] {
-            "nhập môn lập trình",
-            "Cớ sở dữ liệu",
-            "1",
-            "2",
-            "3",
-            "4",
-            "5",
-            "6",
-            "7",
-            "8",
-            "9",
-            "0"});
             this.listBoxAble.Location = new System.Drawing.Point(105, 213);
             this.listBoxAble.Name = "listBoxAble";
             this.listBoxAble.Size = new System.Drawing.Size(223, 114);
@@ -297,14 +293,14 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dataGridView.BackgroundColor = System.Drawing.Color.SteelBlue;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.dataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.MSSV,
@@ -320,6 +316,7 @@
             this.dataGridView.RowTemplate.Height = 24;
             this.dataGridView.Size = new System.Drawing.Size(840, 179);
             this.dataGridView.TabIndex = 2;
+            this.dataGridView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView_CellClick);
             // 
             // MSSV
             // 
@@ -356,28 +353,6 @@
             this.Count.MinimumWidth = 6;
             this.Count.Name = "Count";
             this.Count.ReadOnly = true;
-            // 
-            // radioButtonMale
-            // 
-            this.radioButtonMale.AutoSize = true;
-            this.radioButtonMale.Location = new System.Drawing.Point(256, 139);
-            this.radioButtonMale.Name = "radioButtonMale";
-            this.radioButtonMale.Size = new System.Drawing.Size(75, 32);
-            this.radioButtonMale.TabIndex = 16;
-            this.radioButtonMale.TabStop = true;
-            this.radioButtonMale.Text = "Nam\r\n";
-            this.radioButtonMale.UseVisualStyleBackColor = true;
-            // 
-            // radioButtonFemale
-            // 
-            this.radioButtonFemale.AutoSize = true;
-            this.radioButtonFemale.Location = new System.Drawing.Point(346, 140);
-            this.radioButtonFemale.Name = "radioButtonFemale";
-            this.radioButtonFemale.Size = new System.Drawing.Size(60, 32);
-            this.radioButtonFemale.TabIndex = 17;
-            this.radioButtonFemale.TabStop = true;
-            this.radioButtonFemale.Text = "Nữ";
-            this.radioButtonFemale.UseVisualStyleBackColor = true;
             // 
             // QLSV
             // 
