@@ -47,6 +47,27 @@ Clip minh họa
 
 
 ### 2. Sự kiện Paint
+#### Mô tả bài toán
+- Yêu cầu: 
+    - Viết chương trình minh họa sự kiện Paint trên Form
+    - Mỗi khi sự kiện Paint xảy ra sẽ vẽ lại chuỗi “Paint Event” tại một vị trí x, y ngẫu nhiên trên Form
+- Hướng xử lý:
+    - Thêm vào sự kiện Paint của form, khi xảy ra thì vẽ lại chuỗi “Paint Event” tại một vị trí ngẫu nhiên
+    - Thêm một khung textbox thể hiện trạng thái của form khi kích hoạt Paint
+        - Resize (khi thay đổi kích thước form)
+        - Invalidate (cũng kích hoạt Paint của form)
+    - Thêm các nút refresh lại Form (xóa hình vẽ), Xóa thông báo và Invalidate (kích hoạt Paint thủ công)
+#### Nội dung code
+- [Thư mục bài 2](./Bai2/)
+- [PaintForm.cs](./Bai2/PaintForm.cs)
+- [PaintForm.Designer.cs](./Bai2/PaintForm.Designer.cs)
+
+#### Kiểm thử chương trình
+Các trường hợp
+- Thay đổi kích thước form
+- Nhấn vào button Invalidate để kích hoạt Paint bằng click
+
+Video minh họa
 
 ### 3. Đổi màu nền bất kỳ
 
