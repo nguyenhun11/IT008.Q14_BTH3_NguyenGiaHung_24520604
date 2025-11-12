@@ -1,10 +1,10 @@
-# BÁO CÁO THỰC HÀNH 3
+# BÁO CÁO THỰC HÀNH 3 - LẬP TRÌNH TRỰC QUAN
 | Họ và tên | MSSV | Lớp |
 | :--- | :--- | :--- |
 | **Nguyễn Gia Hưng** | **24520604** | **IT008.Q14.1** |
 
-## Tổng quan
-## Các bài thực hành
+## I. Tổng quan
+## 1. Các bài thực hành
 1. [Vòng đời của form](#1-vòng-đời-của-form)
 2. [Sự kiện Paint](#2-sự-kiện-paint)
 3. [Đổi màu nền bất kỳ](#3-đổi-màu-nền-bất-kỳ)
@@ -14,12 +14,37 @@
 7. [Đặt vé xem phim](#7-đặt-vé-xem-phim)
 8. [Quản lý tài khoản ngân hàng](#8-quản-lý-tài-khoản-ngân-hàng)
 9. [Quản lý sinh viên](#9-quản-lý-sinh-viên)
-## Chạy thử các bài thực hành
+## 2. Chạy thử các bài thực hành
 - Chạy file [BTH3_NguyenGiaHung_24520604.sln](./BTH3_NguyenGiaHung_24520604.sln)
-- Mở list ***Startup Item*** và chọn bài cần chạy, sau đó ***Start*** ![alt text](image/huongDan.png)
+- Mở list ***Startup Item*** và chọn bài cần chạy, sau đó ***Start*** 
 
-## Nội dung báo cáo
+<!-- ![hướng dẫn](image/huongDan.png) -->
+
+## II. Nội dung báo cáo
 ### 1. Vòng đời của form
+#### Mô tả bài toán
+- Yêu cầu:  Viết chương trình minh họa các sự kiện trong vòng đời của form
+- Hướng xử lý:
+    - Một form tổng có thể tạo ra các form con và đánh số thứ tự các form tạo ra
+    - Các form con gửi thông báo về form tổng mỗi khi sự kiện liên quan đến vòng đời của form được kích hoạt
+    - Form tổng tổng hợp các thông báo gửi về từ các form con, in ra thông báo thể hiện giai đoạn vòng đời của form con đã gửi (thông báo hỗ trợ đánh số thứ tự dòng, và xóa các dòng thông báo cũ)
+#### Nội dung code
+- [Thư mục bài 1](./Bai1/)
+- Form chính
+    - [MainForm.cs](./Bai1/MainForm.cs)
+    - [MainForm.Design.cs](./Bai1/MainForm.Designer.cs)
+- Các form demo
+    - [DemoForm.cs](./Bai1/DemoForm.cs)
+    - [DemoForm.Designer.cs](./Bai1/DemoForm.Designer.cs)
+#### Kiểm thử chương trình
+Các trường hợp
+- Tạo một form con, đóng ngay form con
+- Tạo một form con, chuyển các cửa sổ qua lại để form con **Deactivate** và **Activate** luân phiên
+- Nhiều form con xuất hiện, kích hoạt và kết thúc
+
+Clip minh họa
+![](video/Bai1.mp4)
+
 
 ### 2. Sự kiện Paint
 
