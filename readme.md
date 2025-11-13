@@ -19,6 +19,8 @@
 - Mở list ***Startup Item*** và chọn bài cần chạy, sau đó ***Start*** 
 
 <!-- ![hướng dẫn](image/huongDan.png) -->
+### 3. Video minh họa
+- Xem đầy đủ trên playlist [Báo cáo lập trình trực quan 3](https://youtube.com/playlist?list=PLdcN3QW0mt2w8-pIhZBgHjUvyLp4gqZhw&si=o05H7OKdVqsBVZpB)
 
 ## II. Nội dung báo cáo
 ### 1️⃣ Vòng đời của form
@@ -44,9 +46,7 @@ Các trường hợp
 - Tạo một form con, chuyển các cửa sổ qua lại để form con **Deactivate** và **Activate** luân phiên
 - Nhiều form con xuất hiện, kích hoạt và kết thúc
 
-Clip minh họa
-![](video/Bai1.mp4)
-
+[Video minh họa](https://youtu.be/Wa-0478Xb-k)
 
 ### 2️⃣ Sự kiện Paint
 #### Mô tả chương trình
@@ -70,7 +70,7 @@ Các trường hợp
 - Nhấn vào button Invalidate để kích hoạt Paint bằng click
 
 Video minh họa
-<iframe width="853" height="480" src="https://www.youtube.com/embed/Wa-0478Xb-k?list=PLdcN3QW0mt2w8-pIhZBgHjUvyLp4gqZhw" title="Bài 1 | Bài thực hành 3 | Lập trình trực quan IT008.Q14.1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 
 ### 3️⃣ Đổi màu nền bất kỳ
 #### Mô tả chương trình
@@ -150,9 +150,74 @@ Video minh họa
     - Xử lý phép toán 2 ngôi (+, –, ×, ÷)
         - Khi nhấn vào một phép tính, phải kiểm tra và tính toán phép tính đang chờ và cập nhật vào giá trị 1, sau đó cho phép nhập tiếp giá trị 2.
         - Xử lý cách tính toán cho mỗi button, riêng phép chia sẽ báo ra kết quả `Cannot divide by zero`
+    - Xử lý dấu bằng = 
+        - Nếu đang nhập `firstValue`, chỉ lưu giá trị đang nhập vào `firstValue` và hiển thị chỉ phép $=$ trên thanh tính toán
+        - Nếu đang nhập `secondValue`, tính toán kết quả và lưu vào `firstValue` sau đó hiển thị kết quả lên input, dòng phép tính trên thanh math
+        - Nếu nhấn dấu $=$ liên tiếp mà không nhập số mới, sẽ lặp lại phép toán cuối cùng bằng cách sử dụng `secondValue` và `mathType` đã được lưu
+    - Xử lý phép toán 1 ngôi:
+        - Lấy giá trị hiện tại và thực hiện phép toán lập tức
+        - Hiển thị kết quả lên thanh input và thanh math, lưu kết quả tính vào `firstValue`
+    - Chức năng xử lý trạng thái CE, C, DEL và quản lý bộ nhớ
+#### Nội dung code
+
+#### Kiểm thử chương trình
+Các trường hợp
+- Các thao tác nhập liệu
+    - Nhập số nguyên (kiểm tra ký tự tối đa, xử lý dấu . mỗi 3 số)
+    - Kiểm tra dấu , của số thập phân, nhiều dấu ,
+    - Các thao tác DEL, C, CE
+    - Nút đổi dấu +/- khi đang nhập input
+    - Click dấu = khi đang nhập input
+- Các toán tử 2 ngôi
+    - Phép toán đơn giản với số tự nhiên, số thực
+    - Phép chia số thực và chia $0$
+    - Nhập dấu = liên tiếp, kết nối nhiều phép toán, nhiều dấu =
+- Toán tử một ngôi
+    - Chọn phép toán 1 ngôi khi nhập giá trị đầu tiên
+    - Chọn phép toán 1 ngôi sau khi chọn phép toán 2 ngôi và đang nhập giá trị thứ 2
+    - Nhiều phép toán 1 ngôi, kết hợp với dấu =
+    - Kiểm tra căn của số âm
+- Thao tác bộ nhớ kiểm tra các thao tác bộ nhớ
+
+Video minh họa
 
 ### 7. Đặt vé xem phim
+#### Mô tả chương trình
+- Yêu cầu:
+    -  Xây dựng ứng dụng giúp cho rạp chiếu phim quản lý việc bán vé
+    - Rạp có 3 hàng ghế, mỗi hàng có 5 ghế, các ghế được đánh số từ 1 đến 15 và được phân thành 3 dãy. Giá vé của mỗi dãy là 5000, 6500 và 8000 một vé
+    - Trên Form trình bày một sơ đồ các chỗ ngồi để người sử dụng chọn vị trí muốn mua. Trên sơ đồ này cũng thể hiện những vị trí đã bán vé và những vị trí chưa bán vé bằng cách thể hiện màu khác nhau (ghế chưa bán vé màu trắng, ghế đã bán vé màu vàng)
+    - Click vào một chỗ, chuyển từ:
+        - Trắng sang xanh
+        - Xanh sang trắng
+        - Vàng thì in ra thông báo đã bán
+    - Click vào nút chọn:
+        - Tất cả nút xanh chuyển sang vàng
+        - Tính tổng giá các chỗ xanh và in ra thành tiền
+    - Click vào nút hủy:
+        - Tất cả nút xanh chuyển thành trắng
+        - Hiển thị tổng tiền là 0
+    - Click vào kết thúc: thoát chương trình
+- Hướng xử lý:
+    - Tạo lớp `Seat` quản lý chỗ ngồi, gồm các biến màu, biến trạng thái đã bán, chưa bán và đang chọn, không chọn, cùng giá vé. Cùng với các hàm xử lý chọn, đặt vé và hủy bỏ
+    - Tạo list 15 Seat quản lý 15 chỗ, thêm các button chỗ, các button thao tác và tổng tiền, sắp xếp giao diện
+    - Xử lý các thao tác chọn, hủy bỏ
+
+#### Nội dung code
+
+#### Kiểm thử chương trình
+Các trường hợp
+- Chọn 1 hoặc nhiều chỗ ngồi trống, bỏ chọn, chọn ghế đã bán
+- Click chọn khi chọn 1, nhiều ghế, và khi không chọn ghế
+- Hủy bỏ 1 ghế, nhiều ghế, và khi không chọn ghế
+- Đang chọn và đóng chương trình
+
+Video minh họa
 
 ### 8. Quản lý tài khoản ngân hàng
+#### Mô tả chương trình
+- Yêu cầu:
+    - Xây dựng chương trình quản lý thông tin tài khoản cần lưu trữ các thông tin sau: số tài khoản, tên khách hàng, địa chỉ khách hàng và số tiền trong tài khoản. Thiết kế chương trình quản lý thông tin tài khoản cho một ngân hàng có giao diện
+    - 
 
 ### 9. Quản lý sinh viên
