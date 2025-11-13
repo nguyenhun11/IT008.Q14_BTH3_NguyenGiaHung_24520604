@@ -7,8 +7,8 @@
 ## 1. Các bài thực hành
 1. [Vòng đời của form](#1-vòng-đời-của-form)
 2. [Sự kiện Paint](#2-sự-kiện-paint)
-3. [Đổi màu nền bất kỳ](#3-đổi-màu-nền-bất-kỳ)
-4. [Chọn màu nền](#4-chọn-màu-nền)
+3. [Minh họa sự kiện Click trên Button](#3️⃣-minh-họa-sự-kiện-click-trên-button)
+4. [Bài 4.	Minh họa sử dụng Menu và hộp thoại ColorDialog](#4-chọn-màu-nền)
 5. [Máy tính đơn giản](#5-máy-tính-đơn-giản)
 6. [Máy tính mô phỏng calculator của Windows](#6-máy-tính-mô-phỏng-calculator-của-windows)
 7. [Đặt vé xem phim](#7-đặt-vé-xem-phim)
@@ -72,7 +72,7 @@ Các trường hợp
 Video minh họa
 
 
-### 3️⃣ Đổi màu nền bất kỳ
+### 3️⃣ Minh họa sự kiện Click trên Button
 #### Mô tả chương trình
 - Yêu cầu: 
     - Viết chương trình minh họa sự kiện Click trên Button
@@ -91,7 +91,7 @@ Các trường hợp: click vào button Change Color
 
 Video minh họa
 
-### 4️⃣ Chọn màu nền
+### 4️⃣ Bài 4.	Minh họa sử dụng Menu và hộp thoại ColorDialog
 #### Mô tả chương trình
 - Yêu cầu:
     - Viết chương trình minh họa sử dụng Menu và hộp thoại ColorDialog
