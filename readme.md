@@ -70,6 +70,7 @@ Các trường hợp
 - Nhấn vào button Invalidate để kích hoạt Paint bằng click
 
 Video minh họa
+<iframe width="853" height="480" src="https://www.youtube.com/embed/Wa-0478Xb-k?list=PLdcN3QW0mt2w8-pIhZBgHjUvyLp4gqZhw" title="Bài 1 | Bài thực hành 3 | Lập trình trực quan IT008.Q14.1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 ### 3️⃣ Đổi màu nền bất kỳ
 #### Mô tả chương trình
